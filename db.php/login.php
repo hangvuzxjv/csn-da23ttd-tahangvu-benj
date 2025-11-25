@@ -16,7 +16,7 @@ $password = $data['password'];
 
 try {
     // 1. Tìm kiếm user theo email HOẶC username
-    $stmt = $pdo->prepare("SELECT id, username, password_hash, role FROM users WHERE email = ? OR username = ?");
+    $stmt = $pdo->prepare("SELECT id, username, email, password_hash, role FROM users WHERE email = ? OR username = ?");
     $stmt->execute([$user, $user]);
     $userRow = $stmt->fetch();
 
@@ -28,7 +28,7 @@ try {
         $postCount = $postCountStmt->fetchColumn();
         
         // 3. Đăng nhập thành công và trả về Post Count
-    echo json_encode(['success' => true, 'message' => 'Đăng nhập thành công!', 'username' => $userRow['username'], 'role' => $userRow['role'], 'postCount' => $postCount]);
+    echo json_encode(['success' => true, 'message' => 'Đăng nhập thành công!', 'username' => $userRow['username'], 'role' => $userRow['role'], 'postCount' => $postCount, 'email' => $userRow['email']]);
    
     }
      else {

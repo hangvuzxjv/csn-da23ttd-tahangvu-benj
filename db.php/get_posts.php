@@ -1,24 +1,61 @@
 <?php
-// db.php/get_posts.php - Lấy danh sách bài viết từ CSDL
+// db.php/get_posts.php - Lấy danh sách bài viết từ CSDL (ĐÃ CẢI TIẾN BẢO MẬT)
 include 'db.php'; 
 header('Content-Type: application/json');
 
 // Đọc tham số tùy chọn từ URL query string
-$statusFilter = $_GET['status'] ?? 'approved'; // Mặc định chỉ lấy bài đã duyệt
-$authorFilter = $_GET['author'] ?? null;
+$statusFilter = $_GET['status'] ?? 'approved';
+$authorFilter = $_GET['author'] ?? null; // Chứa username của người dùng hiện tại khi gọi từ frontend
 $postId = $_GET['id'] ?? null;
 $limit = $_GET['limit'] ?? null;
 
-$sql = "SELECT id, author_username, title, content, category, created_at, status, admin_note, approved_by_admin FROM posts WHERE 1=1";
+// --- BẢO MẬT: XỬ LÝ YÊU CẦU XEM CHI TIẾT ĐỘC LẬP VÀ BẢO MẬT ---
+if ($postId) {
+    // 1. Lấy vai trò của người dùng hiện tại (nếu đăng nhập)
+    $role = 'user';
+    if ($authorFilter) {
+        $stmtRole = $pdo->prepare("SELECT role FROM users WHERE username = ?");
+        $stmtRole->execute([$authorFilter]);
+        $userRow = $stmtRole->fetch();
+        if ($userRow) {
+            $role = $userRow['role'];
+        }
+    }
+
+    // 2. Lấy bài viết dựa trên ID, bao gồm image_url (Đã cập nhật cho tính năng tiếp theo)
+    $stmtPost = $pdo->prepare("SELECT id, author_username, title, content, category, created_at, status, admin_note, approved_by_admin, image_url FROM posts WHERE id = ?");
+    $stmtPost->execute([$postId]);
+    $post = $stmtPost->fetch(PDO::FETCH_ASSOC);
+
+    if (!$post) {
+         http_response_code(404);
+         echo json_encode(['success' => false, 'message' => 'Bài viết không tồn tại.']);
+         exit;
+    }
+
+    // 3. Kiểm tra quyền truy cập
+    $isAuthor = $post['author_username'] === $authorFilter;
+    $isAdmin = $role === 'admin';
+    $isApproved = $post['status'] === 'approved';
+
+    if ($isApproved || $isAuthor || $isAdmin) {
+        // Cho phép hiển thị
+        echo json_encode(['success' => true, 'posts' => [$post], 'debug' => ['query_type' => 'single_secure']]);
+        exit;
+    } else {
+        // Không có quyền truy cập
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Bài viết này chưa được phê duyệt hoặc bạn không có quyền xem.']);
+        exit;
+    }
+}
+// --- KẾT THÚC XỬ LÝ YÊU CẦU XEM CHI TIẾT ---
+
+
+$sql = "SELECT id, author_username, title, content, category, created_at, status, admin_note, approved_by_admin, image_url FROM posts WHERE 1=1";
 $params = [];
 
-// Lọc theo ID bài viết (cho trang chi tiết)
-if ($postId) {
-    $sql .= " AND id = ?";
-    $params[] = $postId;
-}
-
-// Lọc theo tác giả (cho trang profile)
+// Lọc theo tác giả (cho trang profile) - Logic danh sách
 if ($authorFilter) {
     $sql .= " AND author_username = ?";
     $params[] = $authorFilter;

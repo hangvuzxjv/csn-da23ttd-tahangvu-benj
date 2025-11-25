@@ -287,8 +287,7 @@ async function handleLoginSubmit(event) {
             localStorage.setItem('role', result.role || 'user'); 
             
             // FIX QUAN TRỌNG: Lưu postCount mới nhận từ PHP
-            localStorage.setItem('postCount', result.postCount || 0); 
-            // FIX: Lưu email nếu có (cần sửa db.php/login.php để trả về email)
+            localStorage.setItem('email', result.email);
             // localStorage.setItem('email', result.email); 
 
             alert(result.message);
@@ -374,6 +373,9 @@ async function fetchPosts(params = {}) {
 function createPostCard(post) {
     // Tạo tóm tắt tạm thời
     const summary = post.content.substring(0, 150) + '...'; 
+
+    // Thêm dòng này để lấy URL ảnh hoặc dùng ảnh mặc định 'img/1.jpg'
+    const imageUrl = post.image_url || 'img/1.jpg';
     
     // Định dạng lại ngày tháng
     const postDate = new Date(post.created_at).toLocaleDateString('vi-VN');
@@ -391,7 +393,7 @@ function createPostCard(post) {
 
     return `
         <article class="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
-            <img src="img/1.jpg" alt="${post.title}" class="w-full h-48 object-cover">
+            <img src="${imageUrl}" alt="${post.title}" class="w-full h-48 object-cover">
             <div class="p-5">
                 <span class="text-xs font-semibold ${statusClass} px-2 py-0.5 rounded">${post.category} - ${statusText}</span>
                 <h3 class="text-xl font-semibold text-gray-800 my-2 hover:text-teal-600">
@@ -491,6 +493,7 @@ async function renderPostDetail() {
     // GỌI API MỚI
     const posts = await fetchPosts({ id: postId });
     const post = posts[0];
+    const imageUrl = post.image_url || 'img/1.jpg'; // Dùng ảnh mặc định nếu không có
     
     if (!post) {
          if(container) container.innerHTML = '<h1 class="text-3xl font-bold text-red-500 text-center">Bài viết không tồn tại.</h1>';
@@ -544,7 +547,7 @@ async function renderPostDetail() {
             </div>
 
             <figure class="mb-8">
-                <img src="img/1.jpg" alt="${post.title}" class="w-full h-auto rounded-xl shadow-lg object-cover">
+                <img src="${imageUrl}" alt="${post.title}" class="w-full h-auto rounded-xl shadow-lg object-cover">
                 <figcaption class="text-center text-sm text-gray-500 mt-2">Ảnh minh họa (Tạm thời)</figcaption>
             </figure>
 
@@ -741,32 +744,35 @@ async function handleSubmitPost(event) {
     const content = document.getElementById('post-content').value.trim();
     const category = document.getElementById('post-category').value;
     const author = localStorage.getItem('username');
+    // THÊM: Lấy file đầu tiên từ input
+    const postMedia = document.getElementById('post-media').files[0]; 
 
     if (!author) {
         alert('Bạn cần đăng nhập để đăng bài viết. Chuyển hướng đến trang Đăng nhập.');
         window.location.href = 'dangnhap.html';
         return;
     }
-// ... (Các hàm còn lại)
-// ...
 
     if (title.length < 5 || content.length < 10 || category.length === 0) {
         alert('Vui lòng điền đủ Tiêu đề (tối thiểu 5 ký tự), Nội dung (tối thiểu 10 ký tự) và chọn Phân loại.');
         return;
     }
 
-    const formData = {
-        title: title,
-        content: content,
-        category: category,
-        author: author
-    };
+    // THAY THẾ: Chuyển từ JSON sang FormData để có thể gửi file
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('category', category);
+    formData.append('author', author);
+    if (postMedia) {
+        formData.append('post-media', postMedia); // Tên trường file phải khớp với PHP
+    }
 
     try {
         const response = await fetch('db.php/submit_post.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            // BỎ DÒNG headers: {'Content-Type': 'application/json'}
+            body: formData // Truyền trực tiếp đối tượng FormData
         });
 
         const result = await response.json();
