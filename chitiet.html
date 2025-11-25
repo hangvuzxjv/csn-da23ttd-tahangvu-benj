@@ -60,53 +60,15 @@
         </div>
     </header>
     <main class="container mx-auto px-4 py-10">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto" id="post-detail-container">
+            <!-- TOÀN BỘ NỘI DUNG SẼ ĐƯỢC CHÈN DYNAM MIC BẰNG renderPostDetail() -->
             
-            <div class="mb-8">
-                <h1 class="text-4xl font-extrabold text-teal-700 mb-3">Tóm Tắt Mô Hình Nuôi Tôm 2 Giai Đoạn Tại Duyên Hải</h1>
-                <p class="text-sm text-gray-500">
-                    Chuyên mục: <span class="text-blue-600 font-medium">Kỹ Thuật Nuôi</span> | 
-                    Ngày đăng: 01/11/2025
-                </p>
-            </div>
-
-            <figure class="mb-8">
-                <img src="img/1.jpg" alt="Hình ảnh mô hình nuôi tôm" class="w-full h-auto rounded-xl shadow-lg object-cover">
-                <figcaption class="text-center text-sm text-gray-500 mt-2">Ảnh: Khu ao nuôi tôm tại huyện Duyên Hải, Trà Vinh.</figcaption>
-            </figure>
-
-            <div class="prose max-w-none bg-white p-6 rounded-xl shadow-md">
-                <p class="text-xl font-medium text-gray-700 leading-relaxed mb-6 border-l-4 border-teal-500 pl-4 italic">
-                    Đây là phần tóm tắt hoặc lời dẫn đầu tiên của bài viết, nhấn mạnh vào kinh nghiệm thực tế.
-                </p>
-
-                <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">I. Chuẩn Bị Ao Nuôi</h2>
-                <p>Việc chuẩn bị ao nuôi quyết định 40% thành công của mô hình. Cần tiến hành cải tạo, bón vôi và phơi đáy theo đúng quy trình. Đặc biệt chú trọng đến việc diệt khuẩn và gây màu nước ban đầu.</p>
-                
-                <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">II. Quản Lý Chất Lượng Nước</h2>
-                <ul class="list-disc ml-6 space-y-2">
-                    <li>Kiểm tra pH hàng ngày, duy trì ở mức 7.5 - 8.5.</li>
-                    <li>Sử dụng chế phẩm sinh học định kỳ để phân hủy chất hữu cơ.</li>
-                    <li>Theo dõi nồng độ Oxy hòa tan (DO), đảm bảo > 4 mg/L.</li>
-                </ul>
-
-                <blockquote class="border-l-4 border-yellow-500 pl-4 italic text-gray-600 mt-6">
-                    "Kỹ thuật nuôi 2 giai đoạn giúp giảm thiểu rủi ro bệnh dịch và tối ưu hóa mật độ nuôi, mang lại năng suất cao hơn."
-                </blockquote>
-
-                <p>Ngoài ra, bài viết còn đi sâu vào chế độ cho ăn, cách xử lý các tình huống khẩn cấp như biến động thời tiết, và phương pháp thu hoạch hiệu quả.</p>
-            </div>
+            <!-- Hiển thị Loading/Placeholder trong khi chờ JS tải -->
+             <div class="text-center py-20">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 mx-auto mb-4"></div>
+                <p class="text-gray-600">Đang tải chi tiết bài viết...</p>
+             </div>
             
-            <div class="mt-8 p-6 bg-teal-50 border-l-4 border-teal-600 rounded-lg">
-                <h2 class="text-xl font-bold text-teal-700 mb-2">💡 Phân Tích & Hướng Dẫn từ Quản Trị Viên</h2>
-                <p class="text-gray-700">${post.admin_note}</p>
-                <p class="text-xs text-gray-500 mt-2">Được phê duyệt bởi: ${post.approved_by_admin}</p>
-            </div>
-                <a href="profile.html">
-                    <img src="img/avt1.jpg" alt="Avatar" class="w-16 h-16 rounded-full border-2 border-teal-500">
-                </a>
-            </div>
-
         </div>
     </main>
      <footer class="bg-gray-900 text-white mt-12 pt-10 pb-6">

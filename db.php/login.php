@@ -15,14 +15,20 @@ $user = $data['user'];
 $password = $data['password'];
 
 try {
-    // Tìm kiếm user theo email HOẶC username
+    // 1. Tìm kiếm user theo email HOẶC username
     $stmt = $pdo->prepare("SELECT id, username, password_hash, role FROM users WHERE email = ? OR username = ?");
     $stmt->execute([$user, $user]);
     $userRow = $stmt->fetch();
 
     if ($userRow && password_verify($password, $userRow['password_hash'])) {
-        // Đăng nhập thành công
-    echo json_encode(['success' => true, 'message' => 'Đăng nhập thành công!', 'username' => $userRow['username'], 'role' => $userRow['role']]);
+        
+        // 2. LẤY SỐ LƯỢNG BÀI VIẾT (MỚI)
+        $postCountStmt = $pdo->prepare("SELECT COUNT(*) FROM posts WHERE author_username = ?");
+        $postCountStmt->execute([$userRow['username']]);
+        $postCount = $postCountStmt->fetchColumn();
+        
+        // 3. Đăng nhập thành công và trả về Post Count
+    echo json_encode(['success' => true, 'message' => 'Đăng nhập thành công!', 'username' => $userRow['username'], 'role' => $userRow['role'], 'postCount' => $postCount]);
    
     }
      else {

@@ -1,6 +1,4 @@
-// =========================================================
-// script.js - SCRIPT VẬN HÀNH TOÀN TRANG (FRONTEND HOÀN CHỈNH)
-// =========================================================
+    // =========================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. KHỞI TẠO CÁC PHẦN TỬ CHUNG
@@ -9,11 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const userMenuBtn = document.getElementById('user-menu-btn');
     const userMenu = document.getElementById('user-menu');
     
-    initializeMobileMenu(mobileMenuToggle, mobileMenu);
-    initializeUserMenu(userMenuBtn, userMenu);
-    checkLoginStatus(); 
-    initializeCarousel(); 
-
     // 2. XỬ LÝ FORM ĐĂNG KÝ/ĐĂNG NHẬP/ĐĂNG TIN (Cần lắng nghe sự kiện)
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
@@ -25,24 +18,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const postForm = document.getElementById('post-form');
     if (postForm) {
-        postForm.addEventListener('submit', handleSubmitPost); // Nếu bạn thay đổi postForm submit handler, hãy sửa lại đây
+        postForm.addEventListener('submit', handleSubmitPost); 
     }
     const forgotPasswordForm = document.getElementById('forgot-password-form');
     if (forgotPasswordForm) {
         forgotPasswordForm.addEventListener('submit', handleForgotPasswordSubmit);
-    }
-    // TRONG KHỐI DOMContentLoaded:
-    
+}
     // Thêm lắng nghe cho form reset password
     const resetPasswordForm = document.getElementById('reset-password-form');
     if (resetPasswordForm) {
-        resetPasswordForm.addEventListener('submit', handleResetPasswordSubmit);// Nếu bạn thay đổi resetPasswordForm submit handler, hãy sửa lại đây
-    }
-    // ...
+        resetPasswordForm.addEventListener('submit', handleResetPasswordSubmit);
+ }
 
     // 3. HIỂN THỊ BÀI ĐĂNG TRÊN CÁC TRANG (DÙNG API MỚI)
     // FIX: Bổ sung logic kiểm tra đường dẫn linh hoạt hơn cho môi trường localhost
     const currentPath = window.location.pathname;
+    // Kiểm tra /index.html, / hoặc /ten_thu_muc/
     const isIndexPage = currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath.match(/\/csn-tahangvu\/(\/)?$/i);
 
     if (isIndexPage) {
@@ -62,12 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMyPosts(); 
     }
     
-});
+    
+    // =========================================================================
+    // FIX QUAN TRỌNG: GỌI HÀM KHỞI TẠO Ở CUỐI ĐỂ ĐẢM BẢO TẤT CẢ HÀM ĐƯỢC LOAD
+    // =========================================================================
+    initializeMobileMenu(mobileMenuToggle, mobileMenu);
+    initializeUserMenu(userMenuBtn, userMenu);
+    checkLoginStatus(); 
+    initializeCarousel(); 
+    
+    });
 
-
-// =========================================================
-// CHỨC NĂNG A: HEADER & NAVIGATION
-// =========================================================
+    // =========================================================
+    // CHỨC NĂNG A: HEADER & NAVIGATION
+    // =========================================================
 function initializeMobileMenu(toggle, menu) {
     if (toggle && menu) {
         toggle.addEventListener('click', () => {
@@ -105,8 +104,8 @@ function performSearch() {
 }
 window.performSearch = performSearch; 
 
-// TRONG script.js, HÀM checkLoginStatus (Đã sửa)
-function checkLoginStatus() {
+    //TRONG script.js, HÀM checkLoginStatus (Đã sửa)
+    function checkLoginStatus() {
     const authButtons = document.getElementById('auth-buttons');
     const userProfileDiv = document.getElementById('user-profile');
 
@@ -114,7 +113,7 @@ function checkLoginStatus() {
     const username = localStorage.getItem('username') || 'Người Dùng';
     const userRole = localStorage.getItem('role') || 'user'; // LẤY ROLE MỚI
     
-    // Lưu ý: postCount hiện tại không được cập nhật chính xác từ DB
+    // LẤY POST COUNT TỪ LOCALSTORAGE (Đã được cập nhật trong handleLoginSubmit và renderMyPosts)
     const postCount = localStorage.getItem('postCount') || 0; 
     
     // Cập nhật thông tin trên trang profile
@@ -144,6 +143,8 @@ function checkLoginStatus() {
             userProfileDiv.classList.remove('hidden');
             
             userProfileDiv.querySelector('span').textContent = username;
+            
+            // FIX: Cập nhật số bài viết trên menu
             const profileLink = userProfileDiv.querySelector('a[href="profile.html"]');
             if(profileLink) {
                  profileLink.textContent = `👤 Profile (${postCount} bài)`;
@@ -168,14 +169,12 @@ function checkLoginStatus() {
             userProfileDiv.classList.add('hidden');
         }
     }
+   
+    }
     
-    
-}
-    
-    
-// =========================================================
-// CHỨC NĂNG B: XỬ LÝ FORM AUTH
-// =========================================================
+    // =========================================================
+    // CHỨC NĂNG B: XỬ LÝ FORM AUTH
+    // =========================================================
 
 async function handleRegisterSubmit(event) {
     event.preventDefault();
@@ -219,6 +218,7 @@ async function handleRegisterSubmit(event) {
     }
 }
 
+
 async function handleLoginSubmit(event) {
     event.preventDefault();
     const user = document.getElementById('login-user').value.trim();
@@ -249,6 +249,8 @@ async function handleLoginSubmit(event) {
             localStorage.setItem('username', result.username); 
             localStorage.setItem('role', result.role || 'user'); 
             
+            // FIX QUAN TRỌNG: Lưu postCount mới nhận từ PHP
+            localStorage.setItem('postCount', result.postCount || 0); 
             // FIX: Lưu email nếu có (cần sửa db.php/login.php để trả về email)
             // localStorage.setItem('email', result.email); 
 
@@ -399,12 +401,14 @@ async function renderMyPosts() {
     // Fetch bài viết theo tác giả, bao gồm tất cả trạng thái 
     const myPosts = await fetchPosts({ author: currentUser, status: 'all' });
     
-    // Cập nhật số lượng bài đăng
+    // Cập nhật số lượng bài đăng TRONG LOCALSTORAGE
+    localStorage.setItem('postCount', myPosts.length);
+    
+    // Cập nhật số lượng bài đăng trên giao diện
     const profilePostCount = document.getElementById('profile-post-count');
     if(profilePostCount) {
          profilePostCount.textContent = myPosts.length;
-    }
-
+}
     if (myPosts.length === 0) {
         container.innerHTML = `<p class="text-center text-gray-500 py-6">Bạn chưa có bài viết nào. Hãy <a href="dangtin.html" class="text-teal-600 hover:underline">Đăng Tin</a> để chia sẻ kinh nghiệm!</p>`;
         return;
@@ -491,7 +495,7 @@ async function renderPostDetail() {
 
     const contentHtml = `
         <div class="max-w-4xl mx-auto">
-            <div id="post-detail-container">
+            <div id="post-detail-content">
                 <span class="text-sm font-semibold text-teal-600 bg-teal-100 px-3 py-1 rounded">${post.category}</span>
                 ${statusBadge}
                 <h1 class="text-4xl font-extrabold text-teal-700 mb-3">${post.title}</h1>
@@ -611,8 +615,10 @@ async function renderAllPostsForAdmin() {
     }
 
     const postsHtml = allPosts.map(post => {
-        const statusClass = post.status === 'approved' ? 'bg-green-100 text-green-700 status-approved' : 
-                            (post.status === 'pending' ? 'bg-yellow-100 text-yellow-700 status-pending' : 'bg-red-100 text-red-700 status-rejected');
+        const statusClass = post.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                            (post.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
+        const statusBorder = post.status === 'approved' ? 'border-green-500' : 
+                             (post.status === 'pending' ? 'border-yellow-500' : 'border-red-500');
         const statusText = post.status === 'approved' ? 'Đã Duyệt' : (post.status === 'pending' ? 'Chờ Duyệt' : 'Bị Từ Chối');
         
         // Nút Xóa dành cho ADMIN (Admin có quyền xóa mọi bài)
@@ -622,14 +628,14 @@ async function renderAllPostsForAdmin() {
             </button>`;
 
         return `
-            <div class="bg-white p-4 rounded-xl shadow admin-post-item ${statusClass}">
+            <div class="admin-post-item border-l-4 ${statusBorder}">
                 <div class="flex justify-between items-start">
                     <div>
                         <a href="chitiet.html?id=${post.id}" class="text-lg font-bold text-gray-800 hover:text-red-600">${post.title}</a>
                         <p class="text-xs text-gray-500 mt-1">Tác giả: ${post.author_username} | Phân loại: ${post.category}</p>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-semibold">${statusText}</span>
+                        <span class="text-xs font-semibold ${statusClass} px-2 py-0.5 rounded">${statusText}</span>
                     </div>
                 </div>
                 <div class="flex justify-end mt-3 border-t pt-2">
@@ -660,7 +666,7 @@ async function renderAdminDashboard() {
 
     const postsHtml = pendingPosts.map(post => {
         return `
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500 status-pending">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
                 <h3 class="text-xl font-bold text-gray-800 mb-2">${post.title}</h3>
                 <p class="text-sm text-gray-600 mb-3">Tác giả: ${post.author_username} | Phân loại: ${post.category}</p>
                 <div class="prose max-w-none text-gray-700 leading-relaxed mb-4 border p-3 rounded-lg bg-gray-50 max-h-40 overflow-y-auto">
@@ -826,4 +832,4 @@ function initializeCarousel() {
     // Tự động chuyển slide mỗi 5 giây
     setInterval(nextSlide, 5000); 
 }
-window.initializeCarousel = initializeCarousel; // Cần thiết để hàm được gọi
+    window.initializeCarousel = initializeCarousel; // Cần thiết để hàm được gọi
