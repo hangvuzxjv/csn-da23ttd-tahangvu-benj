@@ -18,18 +18,27 @@ if ($postId) {
     $params[] = $postId;
 }
 
-// Lọc theo trạng thái (mặc định là 'approved' cho các trang công cộng)
-if ($statusFilter && !$postId) {
-    // Chỉ áp dụng status filter nếu không phải là request detail (vì detail có thể cần xem bài pending/rejected)
-    $sql .= " AND status = ?";
-    $params[] = $statusFilter;
-}
-
 // Lọc theo tác giả (cho trang profile)
 if ($authorFilter) {
     $sql .= " AND author_username = ?";
     $params[] = $authorFilter;
+    
+    // LOGIC FIX LỖI: Nếu lọc theo Tác giả VÀ status là 'all' thì không cần thêm status vào mệnh đề WHERE
+    if ($statusFilter !== 'all') {
+        $sql .= " AND status = ?";
+        $params[] = $statusFilter;
+    }
+} else {
+    // Nếu không có authorFilter, chỉ lấy bài APPROVED cho các trang công cộng (index, tintuc)
+    if ($statusFilter === 'approved') {
+        $sql .= " AND status = 'approved'";
+    } else if ($statusFilter !== 'all') {
+        // Áp dụng các trạng thái khác (pending, rejected) nếu được truyền rõ ràng
+        $sql .= " AND status = ?";
+        $params[] = $statusFilter;
+    }
 }
+
 
 $sql .= " ORDER BY created_at DESC";
 
@@ -45,7 +54,8 @@ try {
     $stmt->execute($params);
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(['success' => true, 'posts' => $posts]);
+    // Bổ sung username vào kết quả trả về cho mục đích debug
+    echo json_encode(['success' => true, 'posts' => $posts, 'debug' => ['sql' => $sql, 'params' => $params]]); 
 
 } catch (\PDOException $e) {
     http_response_code(500);
