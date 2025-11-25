@@ -11,7 +11,7 @@ $author_username = $_POST['author'] ?? '';
 $image_url = null; 
 
 // Thư mục lưu trữ ảnh
-$target_dir = "../uploads/";
+$target_dir = realpath(__DIR__ . '/../uploads') . '/';
 
 // --- LOGIC XỬ LÝ TỆP TIN ---
 if (isset($_FILES['post-media']) && $_FILES['post-media']['error'] != UPLOAD_ERR_NO_FILE) {
@@ -25,12 +25,12 @@ if (isset($_FILES['post-media']) && $_FILES['post-media']['error'] != UPLOAD_ERR
         echo json_encode(['success' => false, 'message' => 'Lỗi Upload File Code: ' . $upload_error . '. Vui lòng kiểm tra dung lượng file.']);
         exit;
     }
-    
+
     // 1. Tạo tên file duy nhất
-    $file_extension = pathinfo($_FILES['post-media']['name'], PATHINFO_EXTENSION);
-    $new_file_name = uniqid() . time() . "." . strtolower($file_extension);
-    $target_file = $target_dir . $new_file_name;
-    
+        $new_file_name = uniqid() . time() . "." . strtolower($file_extension);
+        // Sử dụng đường dẫn tuyệt đối cho việc di chuyển tệp
+        $upload_path_absolute = realpath(__DIR__ . '/../uploads') . '/';
+    $target_file = $upload_path_absolute . $new_file_name;
     // 2. Chỉ cho phép các định dạng ảnh phổ biến
     $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
     if (!in_array(strtolower($file_extension), $allowed_types)) {
@@ -41,7 +41,7 @@ if (isset($_FILES['post-media']) && $_FILES['post-media']['error'] != UPLOAD_ERR
     
     // 3. Thực hiện di chuyển file
     if (move_uploaded_file($_FILES['post-media']['tmp_name'], $target_file)) {
-        $image_url = $target_file; 
+        $image_url = "uploads/" . $new_file_name;
     } else {
         // Lỗi thường do quyền ghi (Permission Denied)
         http_response_code(500);
