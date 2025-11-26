@@ -2,6 +2,10 @@
 // script.js - SCRIPT VẬN HÀNH TOÀN TRANG (FRONTEND HOÀN CHỈNH)
 // =========================================================
 
+// Hằng số chứa tiền tố thư mục cần thiết để truy cập ảnh công khai
+// Dựa trên cấu trúc file: db.php/uploads/
+const PUBLIC_UPLOAD_PREFIX = 'db.php/'; 
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. KHỞI TẠO CÁC PHẦN TỬ CHUNG
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
@@ -377,9 +381,15 @@ function createPostCard(post) {
     // Tạo tóm tắt tạm thời
     const summary = post.content.substring(0, 150) + '...'; 
 
-    // Thêm dòng này để lấy URL ảnh hoặc dùng ảnh mặc định 'img/1.jpg'
-    const imageUrl = post.image_url || 'img/1.jpg';
-    
+    // SỬA LỖI 404: Bổ sung PUBLIC_UPLOAD_PREFIX
+    let imageUrl = post.image_url;
+    if (imageUrl && !imageUrl.startsWith(PUBLIC_UPLOAD_PREFIX)) {
+        imageUrl = PUBLIC_UPLOAD_PREFIX + imageUrl;
+    } else if (!imageUrl) {
+        imageUrl = 'img/1.jpg'; // Ảnh mặc định nếu không có URL
+    }
+    // END FIX
+
     // Định dạng lại ngày tháng
     const postDate = new Date(post.created_at).toLocaleDateString('vi-VN');
     
@@ -506,8 +516,14 @@ async function renderPostDetail() {
     const posts = await fetchPosts({ id: postId, author: currentUser });
     const post = posts[0];
     
-    // Lấy link ảnh từ csdl
-    const imageUrl = post.image_url || 'img/1.jpg'; // Dùng ảnh mặc định nếu không có
+    // SỬA LỖI 404: Bổ sung PUBLIC_UPLOAD_PREFIX
+    let imageUrl = post.image_url;
+    if (imageUrl && !imageUrl.startsWith(PUBLIC_UPLOAD_PREFIX)) {
+        imageUrl = PUBLIC_UPLOAD_PREFIX + imageUrl;
+    } else if (!imageUrl) {
+        imageUrl = 'img/1.jpg'; // Ảnh mặc định nếu không có URL
+    }
+    // END FIX
     
     if (!post) {
          if(container) container.innerHTML = '<h1 class="text-3xl font-bold text-red-500 text-center">Bài viết không tồn tại.</h1>';
@@ -664,8 +680,8 @@ async function renderAllPostsForAdmin() {
     
     container.innerHTML = '<p class="text-center text-teal-600 py-10">Đang tải TẤT CẢ bài viết...</p>';
 
-    // Lấy TẤT CẢ bài viết (status: 'all' là tham số tùy chỉnh trong get_posts.php)
-    const allPosts = await fetchPosts({ status: 'all', author: localStorage.getItem('username') });
+    // SỬA LỖI: Bỏ authorFilter để Admin có thể thấy TẤT CẢ bài viết.
+    const allPosts = await fetchPosts({ status: 'all' }); 
 
     if (allPosts.length === 0) {
         container.innerHTML = `<p class="text-center text-gray-500 py-10">Không có bài viết nào trong hệ thống.</p>`;
@@ -716,8 +732,8 @@ async function renderAdminDashboard() {
     
     container.innerHTML = '<p class="text-center text-teal-600 py-10">Đang tải bài viết đang chờ duyệt...</p>';
 
-    // Thêm author: localStorage.getItem('username') vào để get_posts.php không lọc (nếu cần)
-    const pendingPosts = await fetchPosts({ status: 'pending', author: localStorage.getItem('username') });
+    // SỬA LỖI: Bỏ authorFilter để Admin có thể thấy TẤT CẢ bài viết CHỜ DUYỆT
+    const pendingPosts = await fetchPosts({ status: 'pending' });
 
     if (pendingPosts.length === 0) {
         container.innerHTML = `<p class="text-center text-gray-500 py-10">Không có bài viết nào đang chờ duyệt. 🎉</p>`;
