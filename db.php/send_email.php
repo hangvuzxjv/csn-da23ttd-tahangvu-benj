@@ -7,14 +7,16 @@ use PHPMailer\PHPMailer\Exception;
 require 'email_config.php';
 
 // Nếu dùng Composer
-if (file_exists('../vendor/autoload.php')) {
-    require '../vendor/autoload.php';
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require __DIR__ . '/../vendor/autoload.php';
 } 
 // Nếu download thủ công
-elseif (file_exists('PHPMailer/src/Exception.php')) {
-    require 'PHPMailer/src/Exception.php';
-    require 'PHPMailer/src/PHPMailer.php';
-    require 'PHPMailer/src/SMTP.php';
+elseif (file_exists(__DIR__ . '/PHPMailer/src/Exception.php')) {
+    require __DIR__ . '/PHPMailer/src/Exception.php';
+    require __DIR__ . '/PHPMailer/src/PHPMailer.php';
+    require __DIR__ . '/PHPMailer/src/SMTP.php';
+} else {
+    throw new Exception('PHPMailer not found. Please install via Composer or download manually.');
 }
 
 /**
@@ -27,6 +29,9 @@ elseif (file_exists('PHPMailer/src/Exception.php')) {
  * @return array ['success' => bool, 'message' => string]
  */
 function sendEmail($to, $subject, $body, $altBody = '') {
+    // Bắt đầu output buffering để tránh output không mong muốn
+    ob_start();
+    
     $mail = new PHPMailer(true);
     
     try {
@@ -39,10 +44,8 @@ function sendEmail($to, $subject, $body, $altBody = '') {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = SMTP_PORT;
         
-        // Debug (tắt khi production)
-        if (EMAIL_DEBUG) {
-            $mail->SMTPDebug = 2; // 0 = off, 1 = client, 2 = client and server
-        }
+        // Debug (tắt để tránh làm hỏng JSON response)
+        $mail->SMTPDebug = 0; // Luôn tắt debug để tránh output không mong muốn
         
         // Người gửi
         $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
@@ -60,12 +63,18 @@ function sendEmail($to, $subject, $body, $altBody = '') {
         // Gửi email
         $mail->send();
         
+        // Xóa output buffer và trả về kết quả
+        ob_end_clean();
+        
         return [
             'success' => true,
             'message' => 'Email đã được gửi thành công!'
         ];
         
     } catch (Exception $e) {
+        // Xóa output buffer và trả về lỗi
+        ob_end_clean();
+        
         return [
             'success' => false,
             'message' => 'Lỗi gửi email: ' . $mail->ErrorInfo

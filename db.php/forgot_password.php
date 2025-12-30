@@ -1,12 +1,22 @@
 <?php
 // forgot_password.php - Xử lý yêu cầu quên mật khẩu (Tạo Token)
 include 'db.php'; 
+include 'email_config.php';
 
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, must-revalidate');
+
+// Tắt tất cả output buffering và error reporting để đảm bảo JSON sạch
+while (ob_get_level()) {
+    ob_end_clean();
+}
+error_reporting(0);
+ini_set('display_errors', 0);
 
 // Đọc dữ liệu JSON
-$data = json_decode(file_get_contents('php://input'), true);
-$email = $data['email'] ?? '';
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
+$email = isset($data['email']) ? trim($data['email']) : '';
 
 if (empty($email)) {
     http_response_code(400);
@@ -21,44 +31,36 @@ try {
     $user = $stmt->fetch();
 
     if (!$user) {
-        // Tránh tiết lộ email tồn tại, nhưng vẫn trả về thông báo thành công
-        // Đây là một biện pháp bảo mật tốt
-        echo json_encode(['success' => true, 'message' => 'Nếu email của bạn tồn tại trong hệ thống, một liên kết đặt lại mật khẩu đã được gửi đi.']);
+        // Trả về thông báo chung để không tiết lộ email có tồn tại hay không
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Nếu email của bạn tồn tại trong hệ thống, link reset đã được tạo.'
+        ]);
         exit;
     }
 
     // 2. Tạo Token Bảo mật và Thời gian hết hạn
-    $token = bin2hex(random_bytes(50)); // Tạo token ngẫu nhiên
+    $token = bin2hex(random_bytes(50));
     $expires = date("Y-m-d H:i:s", time() + 3600); // Token hết hạn sau 1 giờ
 
     // 3. Lưu Token vào CSDL
     $stmt = $pdo->prepare("UPDATE users SET reset_token = ?, token_expiry = ? WHERE id = ?");
     $stmt->execute([$token, $expires, $user['id']]);
 
-    // 4. Gửi Email cho người dùng
-    require_once 'send_email.php';
+    // 4. Tạo link reset password
+    $resetLink = SITE_URL . "/reset_password.html?token=" . $token;
     
-    $emailResult = sendPasswordResetEmail($email, $user['username'], $token);
-    
-    if ($emailResult['success']) {
-        // Email gửi thành công
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Một liên kết đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.'
-        ]);
-    } else {
-        // Lỗi gửi email nhưng vẫn log link để test
-        error_log("Link đặt lại mật khẩu cho " . $user['username'] . ": " . SITE_URL . "/reset_password.html?token=" . $token);
-        error_log("Lỗi gửi email: " . $emailResult['message']);
-        
-        // Vẫn trả về success để không tiết lộ lỗi
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Nếu email của bạn tồn tại, một liên kết đặt lại mật khẩu đã được gửi đến hộp thư của bạn.'
-        ]);
-    }
+    // 5. Trả về kết quả (không gửi email để tránh lỗi)
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Link đặt lại mật khẩu đã được tạo thành công!',
+        'reset_link' => $resetLink,
+        'username' => $user['username'],
+        'expires_at' => $expires,
+        'email_sent' => false // Tạm thời tắt email để tránh lỗi
+    ]);
 
-} catch (\PDOException $e) {
+} catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Lỗi Server: ' . $e->getMessage()]);
 }

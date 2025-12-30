@@ -142,3 +142,199 @@ header {
         margin-bottom: 1rem;
     }
 }
+
+/* =========================================================
+   PROFESSIONAL DROPDOWN MENU STYLES
+   ========================================================= */
+
+/* Backdrop blur effect cho dropdown */
+#user-menu::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#user-menu:not(.hidden)::before {
+    opacity: 1;
+}
+
+/* Smooth hover animations for dropdown items */
+#user-menu a, #user-menu button {
+    position: relative;
+    overflow: hidden;
+}
+
+#user-menu a::before, #user-menu button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+#user-menu a:hover::before, #user-menu button:hover::before {
+    left: 100%;
+}
+
+/* Enhanced shadow for dropdown */
+#user-menu {
+    box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Gradient border for user button */
+#user-menu-btn {
+    position: relative;
+    background: linear-gradient(135deg, #334155, #1e293b);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+#user-menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, #14b8a6, #06b6d4, #3b82f6);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    z-index: -1;
+}
+
+/* Pulse animation for online status */
+.user-status-indicator {
+    position: relative;
+}
+
+.user-status-indicator::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    background: #10b981;
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+/* Smooth icon rotations */
+.rotate-icon {
+    transition: transform 0.3s ease;
+}
+
+.rotate-icon.rotated {
+    transform: rotate(180deg);
+}
+
+/* Enhanced focus states for accessibility */
+#user-menu a:focus, #user-menu button:focus {
+    outline: 2px solid #14b8a6;
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    #user-menu {
+        width: 320px;
+        right: -20px;
+    }
+    
+    #user-menu::before {
+        display: none;
+    }
+}
+
+/* Dark mode support (if needed later) */
+@media (prefers-color-scheme: dark) {
+    #user-menu {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    #user-menu a, #user-menu button {
+        color: #f9fafb;
+    }
+    
+    #user-menu a:hover, #user-menu button:hover {
+        background: #374151;
+    }
+}
+
+/* Loading skeleton animation for dropdown content */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Notification badge styles */
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid white;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}

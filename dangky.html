@@ -3,51 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Tài Khoản</title>
+    <title>Đăng Ký - Thủy Sản Trà Vinh</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="config.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/error-handler.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-teal-50 flex items-center justify-center min-h-screen">
+<body class="bg-gray-50 flex items-center justify-center min-h-screen py-8">
+    
+    <!-- Nút quay về trang chủ ở đầu -->
+    <div class="fixed top-4 left-4 z-10">
+        <a href="index.html" class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition border border-gray-200 text-gray-700 hover:text-teal-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span class="font-medium">Trang chủ</span>
+        </a>
+    </div>
     
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
-            <a href="index.html" class="text-3xl font-bold text-teal-600">SeaTech</a>
-            <h1 class="text-2xl font-semibold text-gray-800 mt-4">Tạo Tài Khoản Cộng Đồng</h1>
+            <a href="index.html" class="flex items-center justify-center space-x-3 hover:opacity-90 transition">
+                <img src="img/logo.png" alt="Logo" class="h-12 w-12">
+                <span class="text-3xl font-bold text-teal-600">Thủy Sản</span>
+            </a>
+            <h1 class="text-2xl font-semibold text-gray-800 mt-4">Tạo Tài Khoản Mới</h1>
+            <p class="text-gray-600 mt-2">Tham gia cộng đồng thủy sản Trà Vinh</p>
         </div>
 
-        <form id="register-form" class="bg-white p-8 rounded-xl shadow-2xl border-t-4 border-teal-500">
+        <form id="register-form" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <div class="mb-5">
-                <label for="reg-username" class="block text-sm font-medium text-gray-700 mb-1">Tên tài khoản</label>
-                <input type="text" id="reg-username" name="username" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" placeholder="Ví dụ: Minh_Tom_TV">
+                <label for="reg-username" class="block text-sm font-medium text-gray-700 mb-2">Tên tài khoản</label>
+                <input type="text" id="reg-username" name="username" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition" 
+                       placeholder="Ví dụ: NguyenVanA">
+                <p class="text-xs text-gray-500 mt-1">Chỉ sử dụng chữ cái, số và dấu gạch dưới</p>
             </div>
 
             <div class="mb-5">
-                <label for="reg-email" class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ Email</label>
-                <input type="email" id="reg-email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" placeholder="user@example.com">
+                <label for="reg-fullname" class="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
+                <input type="text" id="reg-fullname" name="fullname" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition" 
+                       placeholder="Nhập họ và tên đầy đủ">
             </div>
 
             <div class="mb-5">
-                <label for="reg-password" class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
-                <input type="password" id="reg-password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" placeholder="Tối thiểu 6 ký tự">
+                <label for="reg-email" class="block text-sm font-medium text-gray-700 mb-2">Địa chỉ Email</label>
+                <input type="email" id="reg-email" name="email" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition" 
+                       placeholder="example@email.com">
+            </div>
+
+            <div class="mb-5">
+                <label for="reg-phone" class="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                <input type="tel" id="reg-phone" name="phone" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition" 
+                       placeholder="0123456789">
+                <p class="text-xs text-gray-500 mt-1">Tùy chọn - để liên hệ khi cần thiết</p>
+            </div>
+
+            <div class="mb-5">
+                <label for="reg-location" class="block text-sm font-medium text-gray-700 mb-2">Khu vực</label>
+                <select id="reg-location" name="location" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition">
+                    <option value="">Chọn khu vực</option>
+                    <option value="Trà Vinh">TP. Trà Vinh</option>
+                    <option value="Càng Long">Càng Long</option>
+                    <option value="Cầu Kè">Cầu Kè</option>
+                    <option value="Tiểu Cần">Tiểu Cần</option>
+                    <option value="Châu Thành">Châu Thành</option>
+                    <option value="Cầu Ngang">Cầu Ngang</option>
+                    <option value="Trà Cú">Trà Cú</option>
+                    <option value="Duyên Hải">Duyên Hải</option>
+                    <option value="Khác">Khác</option>
+                </select>
+            </div>
+
+            <div class="mb-5">
+                <label for="reg-password" class="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
+                <input type="password" id="reg-password" name="password" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition" 
+                       placeholder="Tối thiểu 6 ký tự">
             </div>
 
             <div class="mb-6">
-                <label for="reg-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Xác nhận Mật khẩu</label>
-                <input type="password" id="reg-confirm-password" name="confirm-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                <label for="reg-confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Xác nhận mật khẩu</label>
+                <input type="password" id="reg-confirm-password" name="confirm-password" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition" 
+                       placeholder="Nhập lại mật khẩu">
             </div>
 
-            <button type="submit" class="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold hover:bg-teal-700 transition duration-300">
-                Đăng Ký
+            <div class="mb-6">
+                <div class="flex items-start">
+                    <input id="agree-terms" name="agree-terms" type="checkbox" required
+                           class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 mt-1">
+                    <label for="agree-terms" class="ml-2 block text-sm text-gray-700">
+                        Tôi đồng ý với <a href="#" class="text-teal-600 hover:text-teal-700 hover:underline">Điều khoản sử dụng</a> 
+                        và <a href="#" class="text-teal-600 hover:text-teal-700 hover:underline">Chính sách bảo mật</a>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold hover:bg-teal-700 transition duration-300 shadow-md">
+                Tạo Tài Khoản
             </button>
         </form>
 
-        <p class="text-center text-sm text-gray-600 mt-4">
-            Đã có tài khoản? 
-            <a href="dangnhap.html" class="text-teal-600 font-medium hover:underline">Đăng Nhập ngay!</a>
-        </p>
+        <div class="text-center mt-6">
+            <p class="text-gray-600">
+                Đã có tài khoản? 
+                <a href="dangnhap.html" class="text-teal-600 font-medium hover:text-teal-700 hover:underline transition">Đăng nhập ngay</a>
+            </p>
+        </div>
+
+        
     </div>
 
-    <script src="script.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

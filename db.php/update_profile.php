@@ -1,5 +1,5 @@
 <?php
-// update_profile.php - Cập nhật thông tin profile (avatar + tên hiển thị)
+// update_profile.php - Cập nhật thông tin profile đầy đủ
 include 'db.php';
 include 'session_manager.php';
 header('Content-Type: application/json');
@@ -10,15 +10,27 @@ requireLogin();
 $currentUser = getCurrentUser();
 $userId = $currentUser['id'];
 
-// Lấy dữ liệu từ POST
-$displayName = $_POST['display_name'] ?? '';
-$phone = $_POST['phone'] ?? '';
-$avatarFile = $_FILES['avatar'] ?? null;
+// Lấy dữ liệu từ POST (JSON)
+$input = json_decode(file_get_contents('php://input'), true);
 
-// Validate
-if (empty($displayName)) {
+$username = $input['username'] ?? '';
+$fullname = $input['fullname'] ?? '';
+$email = $input['email'] ?? '';
+$phone = $input['phone'] ?? '';
+$currentPassword = $input['current_password'] ?? '';
+$newPassword = $input['new_password'] ?? '';
+
+// Validate dữ liệu bắt buộc
+if (empty($username) || empty($email)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Vui lòng nhập tên hiển thị.']);
+    echo json_encode(['success' => false, 'message' => 'Vui lòng điền đủ thông tin bắt buộc.']);
+    exit;
+}
+
+// Validate email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Email không hợp lệ.']);
     exit;
 }
 
@@ -29,49 +41,98 @@ if (!empty($phone) && !preg_match('/^[0-9]{10,11}$/', $phone)) {
     exit;
 }
 
-$avatarPath = null;
-
-// Xử lý upload avatar
-if ($avatarFile && $avatarFile['error'] == UPLOAD_ERR_OK) {
-    $uploadDir = realpath(__DIR__ . '/../uploads/avatars/');
-    
-    // Tạo thư mục nếu chưa có
-    if (!$uploadDir) {
-        mkdir(__DIR__ . '/../uploads/avatars/', 0755, true);
-        $uploadDir = realpath(__DIR__ . '/../uploads/avatars/');
-    }
-    
-    $fileExt = strtolower(pathinfo($avatarFile['name'], PATHINFO_EXTENSION));
-    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-    
-    if (!in_array($fileExt, $allowedTypes)) {
+// Kiểm tra email đã tồn tại chưa (trừ user hiện tại)
+try {
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+    $stmt->execute([$email, $userId]);
+    if ($stmt->fetch()) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Chỉ cho phép file ảnh (JPG, PNG, GIF).']);
+        echo json_encode(['success' => false, 'message' => 'Email này đã được sử dụng bởi tài khoản khác.']);
         exit;
     }
-    
-    $newFileName = 'avatar_' . $userId . '_' . time() . '.' . $fileExt;
-    $targetPath = $uploadDir . '/' . $newFileName;
-    
-    if (move_uploaded_file($avatarFile['tmp_name'], $targetPath)) {
-        $avatarPath = 'avatars/' . $newFileName;
+} catch (\PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Lỗi kiểm tra email: ' . $e->getMessage()]);
+    exit;
+}
+
+// Kiểm tra xem cột fullname có tồn tại không
+$hasFullnameColumn = false;
+try {
+    $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'fullname'");
+    $hasFullnameColumn = $stmt->rowCount() > 0;
+} catch (\PDOException $e) {
+    // Nếu lỗi, giả sử cột không tồn tại
+    $hasFullnameColumn = false;
+}
+
+// Nếu cột fullname không tồn tại, tạo nó
+if (!$hasFullnameColumn) {
+    try {
+        $pdo->exec("ALTER TABLE users ADD COLUMN fullname VARCHAR(255) DEFAULT NULL AFTER username");
+        $hasFullnameColumn = true;
+    } catch (\PDOException $e) {
+        // Nếu không thể tạo cột, sử dụng display_name thay thế
+        $hasFullnameColumn = false;
     }
 }
 
+// Xử lý đổi mật khẩu (nếu có)
+$passwordHash = null;
+if (!empty($newPassword)) {
+    if (empty($currentPassword)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Vui lòng nhập mật khẩu hiện tại để đổi mật khẩu.']);
+        exit;
+    }
+    
+    // Kiểm tra mật khẩu hiện tại
+    if (!password_verify($currentPassword, $currentUser['password'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Mật khẩu hiện tại không đúng.']);
+        exit;
+    }
+    
+    // Validate mật khẩu mới
+    if (strlen($newPassword) < 6) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Mật khẩu mới phải có ít nhất 6 ký tự.']);
+        exit;
+    }
+    
+    $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+}
+
 try {
-    // Cập nhật display_name, phone và avatar (nếu có)
-    if ($avatarPath) {
-        $stmt = $pdo->prepare("UPDATE users SET display_name = ?, phone = ?, avatar = ? WHERE id = ?");
-        $stmt->execute([$displayName, $phone, $avatarPath, $userId]);
+    // Cập nhật thông tin
+    if ($hasFullnameColumn) {
+        // Sử dụng cột fullname
+        if ($passwordHash) {
+            $stmt = $pdo->prepare("UPDATE users SET fullname = ?, email = ?, phone = ?, password = ? WHERE id = ?");
+            $stmt->execute([$fullname, $email, $phone, $passwordHash, $userId]);
+        } else {
+            $stmt = $pdo->prepare("UPDATE users SET fullname = ?, email = ?, phone = ? WHERE id = ?");
+            $stmt->execute([$fullname, $email, $phone, $userId]);
+        }
+        $_SESSION['fullname'] = $fullname;
     } else {
-        $stmt = $pdo->prepare("UPDATE users SET display_name = ?, phone = ? WHERE id = ?");
-        $stmt->execute([$displayName, $phone, $userId]);
+        // Sử dụng cột display_name thay thế
+        if ($passwordHash) {
+            $stmt = $pdo->prepare("UPDATE users SET display_name = ?, email = ?, phone = ?, password = ? WHERE id = ?");
+            $stmt->execute([$fullname, $email, $phone, $passwordHash, $userId]);
+        } else {
+            $stmt = $pdo->prepare("UPDATE users SET display_name = ?, email = ?, phone = ? WHERE id = ?");
+            $stmt->execute([$fullname, $email, $phone, $userId]);
+        }
+        $_SESSION['display_name'] = $fullname;
     }
 
-    // Cập nhật session (hiển thị display_name thay vì username)
-    $_SESSION['display_name'] = $displayName;
+    // Cập nhật session
+    $_SESSION['email'] = $email;
+    $_SESSION['phone'] = $phone;
 
-    echo json_encode(['success' => true, 'message' => 'Cập nhật thông tin thành công!']);
+    $message = $passwordHash ? 'Cập nhật thông tin và mật khẩu thành công!' : 'Cập nhật thông tin thành công!';
+    echo json_encode(['success' => true, 'message' => $message]);
 
 } catch (\PDOException $e) {
     http_response_code(500);

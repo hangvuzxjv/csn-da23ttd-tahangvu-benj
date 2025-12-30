@@ -3,16 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛠️ Quản Trị Hệ Thống - Duyệt Bài</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com; img-src 'self' data:;">
+    <title>Quản Trị Hệ Thống - Thủy Sản Trà Vinh</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="config.js"></script>
-    <link rel="stylesheet" href="style.css">
     <script>
-        // Kiểm tra quyền admin qua session
+        // Suppress Tailwind CSS warnings
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            teal: {
+                                50: '#f0fdfa',
+                                100: '#ccfbf1',
+                                500: '#14b8a6',
+                                600: '#0d9488',
+                                700: '#0f766e'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script>
+        // Suppress 404 errors for non-existent JS files
+        window.addEventListener('error', function(e) {
+            if (e.filename && e.filename.includes('.js') && e.message.includes('404')) {
+                e.preventDefault();
+                return true;
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .admin-sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .admin-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .admin-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .status-approved { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebar-toggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <img src="img/logo.png" alt="Logo" class="h-8 w-8" onerror="this.style.display='none'">
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">Quản Trị Hệ Thống</h1>
+                            <p class="text-sm text-gray-500">Thủy Sản Trà Vinh</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition">
+                            <div id="admin-avatar" class="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-medium">A</div>
+                            <div class="hidden md:block text-left">
+                                <p id="admin-name" class="text-sm font-medium text-gray-900">Admin</p>
+                                <p class="text-xs text-gray-500">Quản trị viên</p>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar -->
+        <aside id="admin-sidebar" class="admin-sidebar w-64 bg-white shadow-sm border-r border-gray-200 fixed lg:relative lg:translate-x-0 h-full z-30">
+            <nav class="p-6 space-y-2">
+                <div class="mb-8">
+                    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Quản lý nội dung</h2>
+                </div>
+                
+                <a href="#" onclick="showTab('dashboard')" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition active">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>Tổng quan</span>
+                </a>
+                
+                <a href="#" onclick="showTab('pending')" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Chờ duyệt</span>
+                    <span id="pending-count" class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">0</span>
+                </a>
+                
+                <a href="#" onclick="showTab('approved')" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Đã duyệt</span>
+                    <span id="approved-count" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">0</span>
+                </a>
+                
+                <a href="#" onclick="showTab('rejected')" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Đã từ chối</span>
+                    <span id="rejected-count" class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">0</span>
+                </a>
+                
+                <div class="border-t border-gray-200 my-4"></div>
+                
+                <a href="#" onclick="showTab('users')" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    <span>Người dùng</span>
+                </a>
+                
+                <a href="#" onclick="showTab('settings')" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span>Cài đặt</span>
+                </a>
+                
+                <div class="border-t border-gray-200 my-4"></div>
+                
+                <a href="index.html" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Về trang chủ</span>
+                </a>
+                
+                <a href="#" onclick="logout()" class="admin-nav-item flex items-center space-x-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    <span>Đăng xuất</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="p-6">
+                <!-- Dashboard Tab -->
+                <div id="tab-dashboard" class="tab-content">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Tổng quan hệ thống</h2>
+                        <p class="text-gray-600">Thống kê và quản lý nội dung website</p>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="admin-card bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Tổng bài viết</p>
+                                    <p id="total-posts" class="text-3xl font-bold text-gray-900">0</p>
+                                </div>
+                                <div class="p-3 bg-blue-100 rounded-full">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-card bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Chờ duyệt</p>
+                                    <p id="pending-posts" class="text-3xl font-bold text-yellow-600">0</p>
+                                </div>
+                                <div class="p-3 bg-yellow-100 rounded-full">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-card bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Đã duyệt</p>
+                                    <p id="approved-posts" class="text-3xl font-bold text-green-600">0</p>
+                                </div>
+                                <div class="p-3 bg-green-100 rounded-full">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-card bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Người dùng</p>
+                                    <p id="total-users" class="text-3xl font-bold text-purple-600">0</p>
+                                </div>
+                                <div class="p-3 bg-purple-100 rounded-full">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Hoạt động gần đây</h3>
+                        </div>
+                        <div id="recent-activity" class="p-6">
+                            <!-- Recent activity will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Posts Management Tabs -->
+                <div id="tab-pending" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Bài viết chờ duyệt</h2>
+                        <p class="text-gray-600">Xem xét và phê duyệt các bài viết mới</p>
+                    </div>
+                    <div id="pending-posts-list" class="space-y-4">
+                        <!-- Pending posts will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="tab-approved" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Bài viết đã duyệt</h2>
+                        <p class="text-gray-600">Quản lý các bài viết đã được phê duyệt</p>
+                    </div>
+                    <div id="approved-posts-list" class="space-y-4">
+                        <!-- Approved posts will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="tab-rejected" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Bài viết đã từ chối</h2>
+                        <p class="text-gray-600">Các bài viết không được phê duyệt</p>
+                    </div>
+                    <div id="rejected-posts-list" class="space-y-4">
+                        <!-- Rejected posts will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="tab-users" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Quản lý người dùng</h2>
+                        <p class="text-gray-600">Xem và quản lý tài khoản người dùng</p>
+                    </div>
+                    <div id="users-list" class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="tab-settings" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Cài đặt hệ thống</h2>
+                        <p class="text-gray-600">Cấu hình và tùy chỉnh website</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Cài đặt chung</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tên website</label>
+                                    <input type="text" value="Thủy Sản Trà Vinh" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                                    <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">Cổng thông tin nuôi trồng thủy sản Trà Vinh</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Cài đặt bài viết</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700">Tự động duyệt bài</span>
+                                    <button class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700">Cho phép bình luận</span>
+                                    <button class="relative inline-flex h-6 w-11 items-center rounded-full bg-teal-600 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile sidebar overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden hidden"></div>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // Admin access check
         async function checkAdminAccess() {
             try {
-                const url = window.apiUrl ? apiUrl('db.php/check_session.php') : '/Project/db.php/check_session.php';
-                const response = await fetch(url);
+                const response = await fetch(apiUrl('db.php/check_session.php'));
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const result = await response.json();
                 
                 if (!result.isLoggedIn) {
@@ -20,165 +362,509 @@
                     window.location.href = 'dangnhap.html';
                     return false;
                 } else if (result.role !== 'admin') {
-                    const authCheck = document.getElementById('auth-check');
-                    if (authCheck) {
-                        authCheck.classList.remove('hidden');
-                        authCheck.textContent = '❌ BẠN KHÔNG CÓ QUYỀN TRUY CẬP (Chỉ dành cho ADMIN).';
-                    }
+                    alert('Bạn không có quyền truy cập trang quản trị.');
+                    window.location.href = 'index.html';
                     return false;
                 }
+                
+                // Update admin info
+                document.getElementById('admin-name').textContent = result.username || 'Admin';
+                document.getElementById('admin-avatar').textContent = (result.username || 'Admin').charAt(0).toUpperCase();
+                
                 return true;
             } catch (error) {
                 console.error('Lỗi kiểm tra quyền:', error);
+                // Don't show alert for network errors, just log them
+                if (error.message.includes('fetch')) {
+                    console.warn('Network error during admin check, continuing...');
+                    return false;
+                }
                 alert('Lỗi kết nối server.');
                 window.location.href = 'index.html';
                 return false;
             }
         }
-        
-        // Gọi ngay khi load trang
-        checkAdminAccess();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .admin-tab {
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-            color: #6b7280; /* text-gray-400 */
-        }
-        .admin-tab.active {
-            border-bottom-color: #ef4444; /* Màu Red-500 */
-            color: #b91c1c; /* Màu Red-700 */
-        }
-        /* Custom CSS cho Admin Post List */
-        .admin-post-item {
-            padding: 1rem;
-            background-color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border-left-width: 4px;
-            border-radius: 0.5rem;
-        }
-        /* Định nghĩa màu border cho các trạng thái */
-        .border-green-500 { border-left-color: #10b981; } 
-        .border-yellow-500 { border-left-color: #f59e0b; } 
-        .border-red-500 { border-left-color: #ef4444; } 
-    </style>
-</head>
-<body class="bg-gray-100">
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-white shadow-md">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <a href="index.html" class="flex items-center space-x-3 hover:opacity-90 transition"><img src="img/logo.png" alt="Logo" class="h-10 w-10"><span class="text-2xl font-bold text-teal-600">Thủy Sản</span></a>
-                <span class="text-sm font-bold text-red-500 hidden md:inline">TRANG QUẢN TRỊ</span>
-            </div>
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
             
-            <div id="user-profile" class="relative">
-                <button class="flex items-center space-x-2 text-gray-700 hover:text-red-600" id="user-menu-btn">
-                    <img src="img/avt1.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover border-2 border-red-500">
-                    <span class="text-sm font-medium text-red-600">ADMIN</span>
-                </button>
-                <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
-                    <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"> Profile</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="logout()"> Đăng Xuất</a>
+            // Remove active class from all nav items
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.classList.remove('bg-teal-100', 'text-teal-700');
+                item.classList.add('text-gray-700');
+            });
+            
+            // Show selected tab
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            
+            // Add active class to selected nav item
+            event.target.closest('.admin-nav-item').classList.add('bg-teal-100', 'text-teal-700');
+            event.target.closest('.admin-nav-item').classList.remove('text-gray-700');
+            
+            // Load data for selected tab
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'pending':
+                    loadPendingPosts();
+                    break;
+                case 'approved':
+                    loadApprovedPosts();
+                    break;
+                case 'rejected':
+                    loadRejectedPosts();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+            }
+        }
+
+        // Load dashboard statistics
+        async function loadDashboardData() {
+            console.log('Loading dashboard data...');
+            try {
+                // Load admin statistics
+                const statsResponse = await fetch(apiUrl('db.php/get_admin_stats.php'));
+                console.log('Stats response status:', statsResponse.status);
+                
+                const statsResult = await statsResponse.json();
+                console.log('Stats result:', statsResult);
+                
+                if (statsResult.success) {
+                    const data = statsResult.data;
+                    
+                    // Update statistics cards
+                    safeSetText('total-posts', data.posts.total || 0);
+                    safeSetText('pending-posts', data.posts.pending || 0);
+                    safeSetText('approved-posts', data.posts.approved || 0);
+                    safeSetText('total-users', data.users.total || 0);
+                    
+                    // Update sidebar counters
+                    safeSetText('pending-count', data.posts.pending || 0);
+                    safeSetText('approved-count', data.posts.approved || 0);
+                    safeSetText('rejected-count', data.posts.rejected || 0);
+                    
+                    // Load recent activity
+                    loadRecentActivity(data.recent_posts, data.recent_users);
+                } else {
+                    console.error('Error loading stats:', statsResult.message);
+                    alert('Lỗi tải thống kê: ' + statsResult.message);
+                }
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                alert('Lỗi kết nối khi tải dashboard: ' + error.message);
+            }
+        }
+
+        // Load recent activity
+        function loadRecentActivity(recentPosts, recentUsers) {
+            const recentActivity = document.getElementById('recent-activity');
+            let activityHTML = '<div class="space-y-4">';
+            
+            // Recent posts
+            if (recentPosts && recentPosts.length > 0) {
+                recentPosts.slice(0, 5).forEach(post => {
+                    const statusColor = {
+                        'pending': 'yellow-500',
+                        'approved': 'green-500',
+                        'rejected': 'red-500'
+                    }[post.status] || 'gray-500';
+                    
+                    const timeAgo = getTimeAgo(post.created_at);
+                    
+                    activityHTML += `
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-2 h-2 bg-${statusColor} rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">Bài viết: ${post.title.substring(0, 50)}...</p>
+                                <p class="text-xs text-gray-500">Tác giả: ${post.author} • ${timeAgo}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Recent users
+            if (recentUsers && recentUsers.length > 0) {
+                recentUsers.slice(0, 3).forEach(user => {
+                    const timeAgo = getTimeAgo(user.created_at);
+                    
+                    activityHTML += `
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">Người dùng mới: ${user.fullname || user.username}</p>
+                                <p class="text-xs text-gray-500">${timeAgo}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            activityHTML += '</div>';
+            recentActivity.innerHTML = activityHTML;
+        }
+        
+        // Helper function to get time ago
+        function getTimeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Vừa xong';
+            if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' phút trước';
+            if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' giờ trước';
+            return Math.floor(diffInSeconds / 86400) + ' ngày trước';
+        }
+
+        // Load posts by status
+        async function loadPostsByStatus(status, containerId) {
+            console.log(`Loading posts with status: ${status} for container: ${containerId}`);
+            try {
+                const url = apiUrl(`db.php/get_posts.php?status=${status}&admin=true`);
+                console.log('Fetching URL:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('Posts result:', result);
+                
+                if (result.success) {
+                    const container = document.getElementById(containerId);
+                    if (!container) {
+                        console.error('Container not found:', containerId);
+                        return;
+                    }
+                    
+                    if (result.data.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-12">
+                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p class="text-gray-500">Không có bài viết nào với trạng thái "${status}"</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    console.log(`Found ${result.data.length} posts`);
+                    container.innerHTML = result.data.map(post => createPostCard(post)).join('');
+                } else {
+                    console.error('Error loading posts:', result.message);
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="text-center py-12">
+                                <p class="text-red-500">Lỗi tải dữ liệu: ${result.message}</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <p class="text-red-500">Lỗi kết nối server: ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Create post card HTML
+        function createPostCard(post) {
+            const statusClass = {
+                'pending': 'status-pending',
+                'approved': 'status-approved', 
+                'rejected': 'status-rejected'
+            }[post.status] || 'status-pending';
+            
+            const statusText = {
+                'pending': 'Chờ duyệt',
+                'approved': 'Đã duyệt',
+                'rejected': 'Đã từ chối'
+            }[post.status] || 'Chờ duyệt';
+            
+            // Truncate content
+            const truncatedContent = post.content.length > 200 ? 
+                post.content.substring(0, 200) + '...' : post.content;
+            
+            // Handle image with fallback
+            let imageHtml = '';
+            if (post.image_url) {
+                imageHtml = `<img src="${post.image_url}" alt="Post image" class="w-20 h-20 object-cover rounded-lg ml-4" 
+                                 onerror="this.style.display='none'">`;
+            }
+            
+            return `
+                <div class="admin-card bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">${post.title}</h3>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                                <span>Tác giả: ${post.author}</span>
+                                <span>•</span>
+                                <span>${new Date(post.created_at).toLocaleDateString('vi-VN')}</span>
+                                <span>•</span>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm">${truncatedContent}</p>
+                        </div>
+                        ${imageHtml}
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span>${post.views || 0} lượt xem</span>
+                            <span>•</span>
+                            <span>Danh mục: ${post.category}</span>
+                            ${post.species ? `<span>• Loài: ${post.species}</span>` : ''}
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            ${post.status === 'pending' ? `
+                                <button onclick="approvePost(${post.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
+                                    Duyệt
+                                </button>
+                                <button onclick="rejectPost(${post.id})" class="px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">
+                                    Từ chối
+                                </button>
+                            ` : ''}
+                            <button onclick="viewPost(${post.id})" class="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                                Xem
+                            </button>
+                            <button onclick="deletePost(${post.id})" class="px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </header>
+            `;
+        }
 
-    <main class="container mx-auto px-4 py-10">
-        <h1 class="text-4xl font-extrabold text-red-600 mb-6">🛠️ Bảng Điều Khiển Quản Trị</h1>
-        
-        <div id="auth-check" class="bg-red-200 p-4 rounded-lg text-red-800 font-semibold text-center mb-8 hidden">
-            ❌ BẠN KHÔNG CÓ QUYỀN TRUY CẬP (Chỉ dành cho ADMIN).
-        </div>
-        
-        <div id="admin-tabs" class="flex space-x-4 border-b border-gray-300 mb-8">
-            <div class="admin-tab active" data-tab="pending">Duyệt Bài Viết</div>
-            <div class="admin-tab" data-tab="all">Quản Lý TẤT CẢ Bài Viết</div>
-        </div>
-        
-        <div id="tab-content-pending" class="tab-content space-y-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Bài Viết Chờ Duyệt</h2>
-            <div id="pending-posts-list">
-                <!-- Nội dung Bài viết Chờ duyệt -->
-            </div>
-        </div>
-        
-        <div id="tab-content-all" class="tab-content space-y-6 hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Tất Cả Bài Viết Đã Đăng</h2>
-            <div id="all-posts-list">
-                <!-- Nội dung Tất cả Bài viết -->
-            </div>
-        </div>
+        // Load functions for different tabs
+        function loadPendingPosts() {
+            loadPostsByStatus('pending', 'pending-posts-list');
+        }
 
-    </main>
+        function loadApprovedPosts() {
+            loadPostsByStatus('approved', 'approved-posts-list');
+        }
 
-    <!-- FOOTER -->
-    <footer class="bg-gradient-to-r from-slate-800 to-slate-900 text-white mt-12 pt-10 pb-6">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-slate-700 pb-8">
-                <div>
-                    <a href="index.html" class="flex items-center space-x-2"><img src="img/logo.png" alt="Logo" class="h-8 w-8"><span class="text-2xl font-bold text-teal-400">Thủy Sản</span></a>
-                    <p class="text-sm text-white mt-4 leading-relaxed">Cổng thông tin kỹ thuật nuôi trồng thủy sản...</p>
-                </div>
-                <div><h3 class="text-lg font-semibold text-white mb-4 border-b border-teal-500 pb-1">Điều Hướng</h3><ul class="space-y-2 text-sm"><li><a href="index.html" class="text-white hover:text-white transition">Trang Chủ</a></li><li><a href="tintuc.html" class="text-white hover:text-white transition">Tin Tức Cộng Đồng</a></li><li><a href="kythuat-nuoi.html" class="text-white hover:text-white transition">Kỹ Thuật Nuôi Trồng</a></li><li><a href="dangtin.html" class="text-white hover:text-white transition">Đăng Bài/Chia Sẻ</a></li></ul></div>
-                <div><h3 class="text-lg font-semibold text-white mb-4 border-b border-teal-500 pb-1">Tra Cứu Nhanh</h3><ul class="space-y-2 text-sm"><li><a href="kythuat-nuoi.html" class="text-white hover:text-white transition">Kỹ Thuật Nuôi Tôm/Cá</a></li><li><a href="benh-thuy-san.html" class="text-white hover:text-white transition">Phác Đồ Bệnh Thủy Sản</a></li><li></li><li></li></ul></div>
-                <div><h3 class="text-lg font-semibold text-white mb-4 border-b border-teal-500 pb-1">Liên Hệ</h3><ul class="space-y-2 text-sm"><li><span class="text-white">Địa chỉ:</span> <span class="text-white">Trà Vinh, Việt Nam</span></li><li><span class="text-white">Email:</span> <a href="mailto:info@tvfishfarm.com" class="text-teal-400 hover:underline">info@tvfishfarm.com</a></li><li><span class="text-white">Điện thoại:</span> <span class="text-white">(+84) 9xxyyyyzzz</span></li></ul></div>
-            </div>
-            <div class="mt-6 text-center text-sm text-gray-400">
-                &copy; 2025 Kỹ Thuật Nuôi Trồng Thủy Sản Trà Vinh. Được phát triển tại <span class="text-teal-400">Trà Vinh</span>.
-            </div>
-        </div>
-    </footer>
+        function loadRejectedPosts() {
+            loadPostsByStatus('rejected', 'rejected-posts-list');
+        }
 
+        // Load users list
+        async function loadUsers() {
+            try {
+                const response = await fetch(apiUrl('db.php/get_users.php'));
+                const result = await response.json();
+                
+                if (result.success) {
+                    const container = document.getElementById('users-list');
+                    if (result.data.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-12">
+                                <p class="text-gray-500">Không có người dùng nào</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    let usersHTML = `
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người dùng</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tham gia</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                    `;
+                    
+                    result.data.forEach(user => {
+                        const roleClass = user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800';
+                        const roleText = user.role === 'admin' ? 'Quản trị viên' : 'Người dùng';
+                        
+                        usersHTML += `
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-medium">
+                                            ${(user.fullname || user.username).charAt(0).toUpperCase()}
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">${user.fullname || user.username}</div>
+                                            <div class="text-sm text-gray-500">@${user.username}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.email}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full ${roleClass}">${roleText}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    ${new Date(user.created_at).toLocaleDateString('vi-VN')}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button onclick="viewUserPosts('${user.username}')" class="text-teal-600 hover:text-teal-900 mr-3">Xem bài viết</button>
+                                    ${user.role !== 'admin' ? `<button onclick="toggleUserRole(${user.id}, '${user.role}')" class="text-blue-600 hover:text-blue-900">Đổi vai trò</button>` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    usersHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    
+                    container.innerHTML = usersHTML;
+                } else {
+                    console.error('Error loading users:', result.message);
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
 
-    <script src="script.js"></script>
-    <script>
+        // View user posts
+        function viewUserPosts(username) {
+            window.open(`profile.html?user=${username}`, '_blank');
+        }
+
+        // Toggle user role (placeholder function)
+        function toggleUserRole(userId, currentRole) {
+            alert('Tính năng đổi vai trò sẽ được phát triển trong phiên bản tiếp theo.');
+        }
+
+        // Post actions
+        async function approvePost(postId) {
+            if (!confirm('Bạn có chắc chắn muốn duyệt bài viết này?')) return;
+            
+            try {
+                const response = await fetch(apiUrl('db.php/approve_post.php'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ post_id: postId, action: 'approve' })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Đã duyệt bài viết thành công!');
+                    loadPendingPosts();
+                    loadDashboardData();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error approving post:', error);
+                alert('Có lỗi xảy ra khi duyệt bài viết.');
+            }
+        }
+
+        async function rejectPost(postId) {
+            if (!confirm('Bạn có chắc chắn muốn từ chối bài viết này?')) return;
+            
+            try {
+                const response = await fetch(apiUrl('db.php/approve_post.php'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ post_id: postId, action: 'reject' })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Đã từ chối bài viết!');
+                    loadPendingPosts();
+                    loadDashboardData();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error rejecting post:', error);
+                alert('Có lỗi xảy ra khi từ chối bài viết.');
+            }
+        }
+
+        function viewPost(postId) {
+            window.open(`chitiet.html?id=${postId}`, '_blank');
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác.')) return;
+            
+            try {
+                const response = await fetch(apiUrl('db.php/delete_post.php'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ post_id: postId })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Đã xóa bài viết thành công!');
+                    // Reload current tab
+                    const activeTab = document.querySelector('.admin-nav-item.bg-teal-100');
+                    if (activeTab) {
+                        activeTab.click();
+                    }
+                    loadDashboardData();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Có lỗi xảy ra khi xóa bài viết.');
+            }
+        }
+
+        // Sidebar toggle for mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('admin-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('collapsed');
+            overlay.classList.toggle('hidden');
+        });
+
+        document.getElementById('sidebar-overlay').addEventListener('click', function() {
+            const sidebar = document.getElementById('admin-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.add('collapsed');
+            overlay.classList.add('hidden');
+        });
+
+        // Initialize admin panel
         document.addEventListener('DOMContentLoaded', async () => {
-            // Kiểm tra quyền admin
             const hasAccess = await checkAdminAccess();
             
             if (hasAccess) {
-                renderAdminDashboard(); // Tải tab mặc định: Chờ duyệt
-                initializeAdminTabs();
-            }
-            
-            // Khởi tạo Menu User (cần cho header)
-            if (typeof checkLoginStatus !== 'undefined') {
-                 checkLoginStatus(); 
+                // Set dashboard as default active tab
+                document.querySelector('[onclick="showTab(\'dashboard\')"]').classList.add('bg-teal-100', 'text-teal-700');
+                document.querySelector('[onclick="showTab(\'dashboard\')"]').classList.remove('text-gray-700');
+                
+                loadDashboardData();
             }
         });
-
-        function initializeAdminTabs() {
-            const tabs = document.querySelectorAll('.admin-tab');
-            const contents = document.querySelectorAll('.tab-content');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const target = tab.getAttribute('data-tab');
-
-                    // Ẩn tất cả nội dung, loại bỏ trạng thái active
-                    tabs.forEach(t => t.classList.remove('active'));
-                    contents.forEach(c => c.classList.add('hidden'));
-
-                    // Hiển thị nội dung target, thêm trạng thái active
-                    tab.classList.add('active');
-                    document.getElementById(`tab-content-${target}`).classList.remove('hidden');
-
-                    // Tải dữ liệu cho tab được chọn
-                    if (target === 'all') {
-                        renderAllPostsForAdmin();
-                    } else if (target === 'pending') {
-                        renderAdminDashboard();
-                    }
-                });
-            });
-        }
     </script>
 </body>
 </html>
