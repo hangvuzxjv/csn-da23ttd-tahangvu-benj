@@ -76,61 +76,220 @@
         </div>
     </header>
     <main class="container mx-auto px-4 py-10">
-        <h1 class="text-4xl font-extrabold text-teal-600 mb-2">Đăng Tin Mới</h1>
-        <p class="text-gray-600 mb-8">Chia sẻ kinh nghiệm, đặt câu hỏi hoặc đăng tin tức liên quan đến thủy sản Trà Vinh.</p>
-        
-        <form id="post-form" class="bg-white p-6 md:p-10 rounded-xl shadow-lg border-t-4 border-teal-600 space-y-6">
-            
-            <div>
-                <label for="post-title" class="block text-lg font-medium text-gray-700 mb-2">Tiêu đề bài viết <span class="text-red-500">*</span></label>
-                <input type="text" id="post-title" name="post-title" required 
-                       class="w-full border border-gray-300 rounded-lg p-3 focus:ring-teal-500 focus:border-teal-500"
-                       placeholder="Ví dụ: Cảnh báo bệnh gan tụy cấp đang bùng phát ở Duyên Hải">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Đăng Bài Viết Mới</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                Chia sẻ kinh nghiệm nuôi trồng, đặt câu hỏi kỹ thuật hoặc thông báo tin tức quan trọng với cộng đồng thủy sản Trà Vinh
+            </p>
+            <div class="mt-6 flex justify-center">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl">
+                    <div class="flex items-center space-x-2 text-blue-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="font-medium">Lưu ý:</span>
+                    </div>
+                    <p class="text-blue-600 text-sm mt-2">
+                        Bài viết sẽ được kiểm duyệt trước khi xuất bản để đảm bảo chất lượng và tính chính xác của thông tin.
+                    </p>
+                </div>
             </div>
+        </div>
 
-            <div>
-                <label for="post-content" class="block text-lg font-medium text-gray-700 mb-2">Nội dung chi tiết <span class="text-red-500">*</span></label>
-                <textarea id="post-content" name="post-content" rows="10" required 
-                          class="w-full border border-gray-300 rounded-lg p-3 focus:ring-teal-500 focus:border-teal-500"
-                          placeholder="Viết nội dung bài đăng của bạn tại đây..."></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="max-w-4xl mx-auto">
+            <form id="post-form" class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
                 
-                <div>
-                    <label for="post-category" class="block text-lg font-medium text-gray-700 mb-2">Phân loại chính <span class="text-red-500">*</span></label>
-                    <select id="post-category" name="post-category" required
-                            class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:ring-teal-500 focus:border-teal-500">
-                        <option value="">-- Chọn danh mục --</option>
-                        <option value="kinh-nghiem">Chia sẻ Kinh nghiệm Nuôi</option>
-                        <option value="cau-hoi">Hỏi đáp/Nhờ trợ giúp</option>
-                        <option value="canh-bao">Cảnh báo Dịch bệnh/Môi trường</option>
-                        <option>Tin tức khác</option>
-                    </select>
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-8 py-6">
+                    <h2 class="text-2xl font-bold text-white">Thông Tin Bài Viết</h2>
+                    <p class="text-teal-100 mt-2">Vui lòng điền đầy đủ thông tin để bài viết được xử lý nhanh chóng</p>
                 </div>
 
-                <div>
-                    <label for="post-tags" class="block text-lg font-medium text-gray-700 mb-2">Từ khóa/Tags (Phân loại chi tiết)</label>
-                    <input type="text" id="post-tags" name="post-tags" 
-                           class="w-full border border-gray-300 rounded-lg p-3 focus:ring-teal-500 focus:border-teal-500"
-                           placeholder="Ví dụ: Tôm Thẻ, Duyên Hải, Dịch bệnh, Thức ăn">
-                    <p class="text-sm text-gray-400 mt-1">Các từ khóa giúp người khác dễ dàng tìm thấy bài viết của bạn.</p>
+                <div class="p-8 space-y-8">
+                    
+                    <!-- Basic Information Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-teal-500 pl-4">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Thông Tin Cơ Bản</h3>
+                            <p class="text-gray-600 text-sm">Tiêu đề và nội dung chính của bài viết</p>
+                        </div>
+
+                        <div>
+                            <label for="post-title" class="block text-sm font-semibold text-gray-700 mb-3">
+                                Tiêu đề bài viết <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="post-title" name="post-title" required 
+                                   class="w-full border-2 border-gray-300 rounded-xl p-4 text-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
+                                   placeholder="Nhập tiêu đề rõ ràng, súc tích (tối thiểu 10 ký tự)">
+                            <div class="mt-2 text-sm text-gray-500">
+                                <span class="font-medium">Gợi ý:</span> Sử dụng tiêu đề mô tả chính xác nội dung, ví dụ: "Kỹ thuật nuôi tôm thẻ trong mùa mưa tại Duyên Hải"
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="post-content" class="block text-sm font-semibold text-gray-700 mb-3">
+                                Nội dung chi tiết <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="post-content" name="post-content" rows="12" required 
+                                      class="w-full border-2 border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 resize-none"
+                                      placeholder="Mô tả chi tiết nội dung bài viết của bạn...
+
+Hướng dẫn viết bài hiệu quả:
+• Mô tả rõ ràng vấn đề hoặc kinh nghiệm
+• Cung cấp thông tin cụ thể (thời gian, địa điểm, số liệu)
+• Chia sẻ kết quả thực tế nếu có
+• Sử dụng ngôn ngữ dễ hiểu, tránh từ ngữ phức tạp"></textarea>
+                            <div class="mt-2 flex justify-between text-sm text-gray-500">
+                                <span>Tối thiểu 50 ký tự</span>
+                                <span id="content-counter">0 ký tự</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classification Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Phân Loại & Thẻ Tag</h3>
+                            <p class="text-gray-600 text-sm">Giúp độc giả dễ dàng tìm thấy bài viết của bạn</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label for="post-category" class="block text-sm font-semibold text-gray-700 mb-3">
+                                    Danh mục chính <span class="text-red-500">*</span>
+                                </label>
+                                <select id="post-category" name="post-category" required
+                                        class="w-full border-2 border-gray-300 rounded-xl p-4 text-gray-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200">
+                                    <option value="">-- Chọn danh mục phù hợp --</option>
+                                    <option value="kinh-nghiem">💡 Chia sẻ Kinh nghiệm Nuôi</option>
+                                    <option value="cau-hoi">❓ Hỏi đáp/Nhờ trợ giúp</option>
+                                    <option value="canh-bao">⚠️ Cảnh báo Dịch bệnh/Môi trường</option>
+                                    <option value="tin-tuc">📰 Tin tức & Thông báo</option>
+                                    <option value="ky-thuat">🔬 Kỹ thuật & Công nghệ</option>
+                                    <option value="thi-truong">💰 Thị trường & Giá cả</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="post-location" class="block text-sm font-semibold text-gray-700 mb-3">
+                                    Khu vực liên quan
+                                </label>
+                                <select id="post-location" name="post-location"
+                                        class="w-full border-2 border-gray-300 rounded-xl p-4 text-gray-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200">
+                                    <option value="">-- Chọn khu vực (tùy chọn) --</option>
+                                    <option value="tra-vinh">Thành phố Trà Vinh</option>
+                                    <option value="duyen-hai">Duyên Hải</option>
+                                    <option value="cau-ke">Cầu Kè</option>
+                                    <option value="tieu-can">Tiểu Cần</option>
+                                    <option value="chau-thanh">Châu Thành</option>
+                                    <option value="cang-long">Cang Long</option>
+                                    <option value="tra-cu">Trà Cú</option>
+                                    <option value="cau-ngang">Cầu Ngang</option>
+                                    <option value="toan-tinh">Toàn tỉnh</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="post-tags" class="block text-sm font-semibold text-gray-700 mb-3">
+                                Từ khóa/Tags
+                            </label>
+                            <input type="text" id="post-tags" name="post-tags" 
+                                   class="w-full border-2 border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
+                                   placeholder="Ví dụ: tôm thẻ, bệnh đốm trắng, thức ăn công nghiệp, ao đất">
+                            <div class="mt-2 text-sm text-gray-500">
+                                <span class="font-medium">Gợi ý tags phổ biến:</span>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <button type="button" class="tag-suggestion px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-teal-100 hover:text-teal-700 transition" onclick="addTag('tôm thẻ')">tôm thẻ</button>
+                                    <button type="button" class="tag-suggestion px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-teal-100 hover:text-teal-700 transition" onclick="addTag('cá tra')">cá tra</button>
+                                    <button type="button" class="tag-suggestion px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-teal-100 hover:text-teal-700 transition" onclick="addTag('bệnh thủy sản')">bệnh thủy sản</button>
+                                    <button type="button" class="tag-suggestion px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-teal-100 hover:text-teal-700 transition" onclick="addTag('thức ăn')">thức ăn</button>
+                                    <button type="button" class="tag-suggestion px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-teal-100 hover:text-teal-700 transition" onclick="addTag('chất lượng nước')">chất lượng nước</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Media Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Hình Ảnh Minh Họa</h3>
+                            <p class="text-gray-600 text-sm">Thêm hình ảnh để bài viết sinh động và dễ hiểu hơn</p>
+                        </div>
+
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-teal-400 transition-colors duration-200">
+                            <div class="space-y-4">
+                                <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <label for="post-media" class="cursor-pointer">
+                                        <span class="text-lg font-medium text-teal-600 hover:text-teal-700">Chọn hình ảnh</span>
+                                        <span class="text-gray-500"> hoặc kéo thả vào đây</span>
+                                    </label>
+                                    <input type="file" id="post-media" name="post-media" accept="image/*" class="hidden">
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    <p>Định dạng: JPG, PNG, GIF (tối đa 5MB)</p>
+                                    <p>Khuyến nghị: Hình ảnh rõ nét, liên quan trực tiếp đến nội dung</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Image preview area -->
+                        <div id="image-preview" class="hidden">
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Hình ảnh đã chọn:</span>
+                                    <button type="button" onclick="removeImage()" class="text-red-500 hover:text-red-700 text-sm">Xóa</button>
+                                </div>
+                                <img id="preview-img" class="max-w-full h-48 object-cover rounded-lg" alt="Preview">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submission Guidelines -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                        <h4 class="text-lg font-semibold text-amber-800 mb-3">Quy Định Đăng Bài</h4>
+                        <ul class="space-y-2 text-sm text-amber-700">
+                            <li class="flex items-start space-x-2">
+                                <span class="text-amber-500 mt-0.5">•</span>
+                                <span>Nội dung phải liên quan đến thủy sản, không spam hoặc quảng cáo</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <span class="text-amber-500 mt-0.5">•</span>
+                                <span>Sử dụng ngôn ngữ lịch sự, tôn trọng các thành viên khác</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <span class="text-amber-500 mt-0.5">•</span>
+                                <span>Thông tin phải chính xác, có nguồn gốc rõ ràng</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <span class="text-amber-500 mt-0.5">•</span>
+                                <span>Bài viết sẽ được kiểm duyệt trong vòng 24 giờ</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+                        <button type="button" onclick="saveDraft()" class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                            Lưu Nháp
+                        </button>
+                        <button type="button" onclick="previewPost()" class="px-6 py-3 border-2 border-teal-600 text-teal-600 font-semibold rounded-xl hover:bg-teal-50 transition-all duration-200">
+                            Xem Trước
+                        </button>
+                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white text-lg font-bold rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            Đăng Bài Viết
+                        </button>
+                    </div>
+
                 </div>
-            </div>
-
-            <div>
-                <label for="post-media" class="block text-lg font-medium text-gray-700 mb-2">Thêm Ảnh/Video minh họa (Tùy chọn)</label>
-                <input type="file" id="post-media" name="post-media" accept="image/*" 
-                class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
-                <p class="text-sm text-gray-400 mt-1">Chỉ một ảnh minh họa được chấp nhận.</p>
-            </div>
-            
-            <div class="pt-4 flex justify-end space-x-4">
-                <button type="button" class="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">Hủy</button>
-                <button type="submit" class="px-8 py-3 bg-teal-600 text-white text-lg font-bold rounded-lg hover:bg-teal-700 transition shadow-md hover:shadow-lg">Đăng Bài Ngay</button>
-            </div>
-
-        </form>
+            </form>
+        </div>
     </main>
     <footer class="bg-gradient-to-r from-slate-800 to-slate-900 text-white mt-12 pt-10 pb-6">
     <div class="container mx-auto px-4">
@@ -184,5 +343,154 @@
 </footer>
 
     <script src="script.js"></script>
+    
+    <!-- Enhanced Post Form JavaScript -->
+    <script>
+        // Character counter for content
+        document.getElementById('post-content').addEventListener('input', function() {
+            const counter = document.getElementById('content-counter');
+            const length = this.value.length;
+            counter.textContent = length + ' ký tự';
+            
+            if (length < 50) {
+                counter.className = 'text-red-500';
+            } else {
+                counter.className = 'text-green-600';
+            }
+        });
+
+        // Add tag functionality
+        function addTag(tag) {
+            const tagsInput = document.getElementById('post-tags');
+            const currentTags = tagsInput.value;
+            
+            if (currentTags.includes(tag)) return; // Don't add duplicate
+            
+            if (currentTags.length > 0) {
+                tagsInput.value = currentTags + ', ' + tag;
+            } else {
+                tagsInput.value = tag;
+            }
+        }
+
+        // Image preview functionality
+        document.getElementById('post-media').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview-img').src = e.target.result;
+                    document.getElementById('image-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove image
+        function removeImage() {
+            document.getElementById('post-media').value = '';
+            document.getElementById('image-preview').classList.add('hidden');
+        }
+
+        // Save draft functionality
+        function saveDraft() {
+            const formData = {
+                title: document.getElementById('post-title').value,
+                content: document.getElementById('post-content').value,
+                category: document.getElementById('post-category').value,
+                location: document.getElementById('post-location').value,
+                tags: document.getElementById('post-tags').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('post_draft', JSON.stringify(formData));
+            
+            // Show success message
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Đã Lưu!';
+            button.className = button.className.replace('border-gray-300 text-gray-700', 'border-green-500 text-green-600');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.className = button.className.replace('border-green-500 text-green-600', 'border-gray-300 text-gray-700');
+            }, 2000);
+        }
+
+        // Load draft on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const draft = localStorage.getItem('post_draft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                const shouldLoad = confirm('Bạn có muốn khôi phục bản nháp đã lưu không?');
+                
+                if (shouldLoad) {
+                    document.getElementById('post-title').value = data.title || '';
+                    document.getElementById('post-content').value = data.content || '';
+                    document.getElementById('post-category').value = data.category || '';
+                    document.getElementById('post-location').value = data.location || '';
+                    document.getElementById('post-tags').value = data.tags || '';
+                    
+                    // Trigger content counter update
+                    document.getElementById('post-content').dispatchEvent(new Event('input'));
+                }
+            }
+        });
+
+        // Preview post functionality
+        function previewPost() {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const category = document.getElementById('post-category').value;
+            
+            if (!title || !content || !category) {
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc trước khi xem trước.');
+                return;
+            }
+            
+            // Create preview modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800">Xem Trước Bài Viết</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-sm font-medium">${document.getElementById('post-category').selectedOptions[0].text}</span>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4">${title}</h1>
+                        <div class="prose max-w-none">
+                            ${content.split('\\n').map(p => p.trim() ? `<p class="mb-4">${p}</p>` : '').join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Clear draft after successful submission
+        document.getElementById('post-form').addEventListener('submit', function() {
+            // Clear draft after form submission
+            setTimeout(() => {
+                localStorage.removeItem('post_draft');
+            }, 1000);
+        });
+
+        // Export functions to global scope
+        window.addTag = addTag;
+        window.removeImage = removeImage;
+        window.saveDraft = saveDraft;
+        window.previewPost = previewPost;
+    </script>
 </body>
 </html>

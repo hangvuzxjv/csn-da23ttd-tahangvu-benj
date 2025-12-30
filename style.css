@@ -46,3 +46,99 @@
 .transition {
     transition: all 0.3s ease-in-out;
 }
+
+/* Styles cho trang chi tiết bài viết */
+.article-content {
+    font-size: 1.125rem;
+    line-height: 1.8;
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+.article-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #0d9488;
+}
+
+/* Hiệu ứng hover cho các card */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Animation cho loading */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #0d9488, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Custom button styles */
+.btn-primary {
+    background: linear-gradient(135deg, #0d9488, #06b6d4);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Fix z-index issues */
+header {
+    position: relative;
+    z-index: 100;
+}
+
+.dropdown-menu {
+    z-index: 110;
+}
+
+/* Hero section should not interfere with header */
+.hero-section {
+    position: relative;
+    z-index: 10;
+}
+
+/* Responsive text */
+@media (max-width: 768px) {
+    .article-content {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .article-content p {
+        margin-bottom: 1rem;
+    }
+}

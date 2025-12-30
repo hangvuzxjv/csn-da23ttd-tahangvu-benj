@@ -99,8 +99,40 @@ function initializeAdminButtonDelegation() {
 
 
 // =========================================================
-// CHỨC NĂNG A: HEADER & NAVIGATION
+// CHỨC NĂNG: TẠO AVATAR TỰ ĐỘNG
 // =========================================================
+
+function generateAvatar(username, size = 'w-16 h-16', textSize = 'text-xl') {
+    const firstLetter = username.charAt(0).toUpperCase();
+    const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-yellow-500', 'bg-teal-500', 'bg-orange-500', 'bg-cyan-500'];
+    const colorIndex = username.length % colors.length;
+    const bgColor = colors[colorIndex];
+    
+    return `<div class="${size} rounded-full border-3 border-teal-500 shadow-lg ${bgColor} flex items-center justify-center text-white font-bold ${textSize}">${firstLetter}</div>`;
+}
+
+function updateAllAvatars(username) {
+    // Cập nhật avatar trong header (nếu có)
+    const headerAvatar = document.querySelector('#user-menu-btn img');
+    if (headerAvatar) {
+        headerAvatar.outerHTML = generateAvatar(username, 'w-8 h-8', 'text-sm');
+    }
+    
+    // Cập nhật avatar trong profile
+    const profileAvatar = document.getElementById('profile-avatar');
+    if (profileAvatar) {
+        profileAvatar.outerHTML = generateAvatar(username, 'w-32 h-32', 'text-4xl');
+    }
+    
+    // Cập nhật avatar trong author card
+    const authorAvatar = document.getElementById('author-avatar');
+    if (authorAvatar) {
+        authorAvatar.outerHTML = generateAvatar(username, 'w-16 h-16', 'text-xl');
+    }
+}
+
+window.generateAvatar = generateAvatar;
+window.updateAllAvatars = updateAllAvatars;
 function initializeMobileMenu(toggle, menu) {
     if (toggle && menu) {
         toggle.addEventListener('click', () => {
@@ -138,6 +170,42 @@ function performSearch() {
     window.location.href = `search.html?q=${encodedQuery}&province=${province}`;
 }
 window.performSearch = performSearch; 
+
+// Function để toggle mobile menu (cần cho các trang khác)
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.classList.toggle('hidden');
+    }
+}
+window.toggleMobileMenu = toggleMobileMenu;
+
+// Function để toggle user menu
+function toggleUserMenu() {
+    const userDropdown = document.getElementById('user-dropdown');
+    if (userDropdown) {
+        userDropdown.classList.toggle('hidden');
+    }
+}
+window.toggleUserMenu = toggleUserMenu;
+
+// Function logout
+function logout() {
+    fetch(apiUrl('db.php/logout.php'), {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            window.location.href = 'index.html';
+        }
+    })
+    .catch(error => {
+        console.error('Logout error:', error);
+        window.location.href = 'index.html';
+    });
+}
+window.logout = logout; 
 
 // TRONG script.js, HÀM checkLoginStatus (ĐÃ SỬA - DÙNG SESSION)
 async function checkLoginStatus() {
@@ -213,6 +281,9 @@ async function checkLoginStatus() {
                     console.log('Updated username to:', username);
                 }
             }
+            
+            // Cập nhật tất cả avatar
+            updateAllAvatars(username);
             
             // Cập nhật số bài viết trên menu
             const profileLink = userProfileDiv.querySelector('a[href="profile.html"]');
@@ -496,14 +567,19 @@ async function renderMyPosts() {
     });
 }
 
-// Cập nhật renderPostDetail để dùng API và hiển thị Admin Note
+// Cập nhật renderPostDetail để dùng API và hiển thị Admin Note với layout mới
 async function renderPostDetail() {
     const container = document.getElementById('post-detail-container');
+    const contentLoading = document.getElementById('content-loading');
+    const authorCard = document.getElementById('author-card');
+    
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
 
     if (!postId) {
-        if(container) container.innerHTML = '<h1 class="text-3xl font-bold text-red-500 text-center">Lỗi: Không tìm thấy ID bài viết!</h1>';
+        if(container) {
+            container.innerHTML = '<div class="p-8 text-center"><h1 class="text-3xl font-bold text-red-500">Lỗi: Không tìm thấy ID bài viết!</h1></div>';
+        }
         return;
     }
     
@@ -512,8 +588,10 @@ async function renderPostDetail() {
     const post = posts[0];
     
     if (!post) {
-         if(container) container.innerHTML = '<h1 class="text-3xl font-bold text-red-500 text-center">Bài viết không tồn tại.</h1>';
-         return;
+        if(container) {
+            container.innerHTML = '<div class="p-8 text-center"><h1 class="text-3xl font-bold text-red-500">Bài viết không tồn tại.</h1></div>';
+        }
+        return;
     }
     
     // Xử lý ảnh - ảnh được lưu trong thư mục uploads/
@@ -527,78 +605,164 @@ async function renderPostDetail() {
         imageUrl = 'img/' + imageNum + '.jpg';
     }
     
-    // Logic kiểm tra quyền truy cập đã được xử lý ở server
-    // Nếu post tồn tại, nghĩa là user có quyền xem
-    
-    // --- Bắt đầu tạo HTML ---
-    document.title = post.title + ' | SeaTech';
+    // Cập nhật title trang
+    document.title = post.title + ' | Thủy Sản Trà Vinh';
     const postDate = new Date(post.created_at).toLocaleDateString('vi-VN');
+    
+    // Ẩn loading và hiển thị nội dung
+    if (contentLoading) {
+        contentLoading.classList.add('hidden');
+    }
     
     // Xử lý Admin Note (Phân tích/Hướng dẫn)
     let adminNoteHtml = '';
     if (post.status === 'approved' && post.admin_note) {
         adminNoteHtml = `
-            <div class="mt-8 p-6 bg-teal-50 border-l-4 border-teal-600 rounded-lg">
-                <h2 class="text-xl font-bold text-teal-700 mb-2">💡 Phân Tích & Hướng Dẫn từ Quản Trị Viên</h2>
-                <div class="prose max-w-none text-gray-700 leading-relaxed">
-                    <p>${post.admin_note.replace(/\n/g, '</p><p>')}</p>
+            <div class="bg-teal-50 border-l-4 border-teal-600 rounded-lg p-6 mb-8">
+                <div class="flex items-start space-x-3">
+                    <div class="bg-teal-600 text-white rounded-full p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-teal-700 mb-3">💡 Phân Tích & Hướng Dẫn từ Chuyên Gia</h3>
+                        <div class="prose max-w-none text-gray-700 leading-relaxed">
+                            <p>${post.admin_note.replace(/\n/g, '</p><p>')}</p>
+                        </div>
+                        <div class="mt-4 flex items-center space-x-2 text-sm text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Được phê duyệt bởi: ${post.approved_by_admin}</span>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-2">Được phê duyệt bởi: ${post.approved_by_admin}</p>
             </div>
         `;
     }
-    
+
     // Thẻ trạng thái (cho tác giả/admin xem)
     let statusBadge = '';
     if (post.status !== 'approved') {
-        const statusClass = post.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700';
-        statusBadge = `<span class="ml-3 px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">${post.status === 'pending' ? 'Đang Chờ Duyệt' : 'Đã Bị Từ Chối'}</span>`;
+        const statusClass = post.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500';
+        const statusText = post.status === 'pending' ? 'Đang Chờ Duyệt' : 'Đã Bị Từ Chối';
+        statusBadge = `<div class="mb-4"><span class="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${statusClass}">${statusText}</span></div>`;
     }
 
+    // Tạo nội dung chính
     const contentHtml = `
-        <div class="max-w-4xl mx-auto">
-            <div id="post-detail-content">
-                <span class="text-sm font-semibold text-teal-600 bg-teal-100 px-3 py-1 rounded">${post.category}</span>
-                ${statusBadge}
-                <h1 class="text-4xl font-extrabold text-teal-700 mb-3">${post.title}</h1>
-                <p class="text-sm text-gray-500">
-                    Ngày đăng: ${postDate} | Tác giả: <span class="font-medium text-teal-600">${post.author_username}</span>
-                </p>
+        <!-- Article Content -->
+        <div class="p-8">
+            ${statusBadge}
+            
+            <!-- Article Header -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-sm font-semibold">${post.category}</span>
+                    <span class="text-sm text-gray-500">${postDate}</span>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">${post.title}</h1>
             </div>
 
-            <figure class="mb-8">
-                <img src="${imageUrl}" alt="${post.title}" class="w-full h-auto rounded-xl shadow-lg object-cover">
-                <figcaption class="text-center text-sm text-gray-500 mt-2">Ảnh minh họa (Tạm thời)</figcaption>
-            </figure>
+            <!-- Featured Image -->
+            <div class="mb-6">
+                <img src="${imageUrl}" alt="${post.title}" class="w-full h-64 object-cover rounded-lg shadow-md">
+            </div>
 
-            <div class="prose max-w-none bg-white p-6 rounded-xl shadow-md">
-                <div class="text-gray-700 leading-relaxed">
-                    <p>${post.content.replace(/\n/g, '</p><p>')}</p>
+            <!-- Article Meta -->
+            <div class="flex flex-wrap items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <span class="flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span>Tác giả: ${post.author_username}</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <span>${post.views || 0} lượt xem</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>${Math.ceil(post.content.length / 200)} phút đọc</span>
+                    </span>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <button onclick="rateArticle(5)" class="text-yellow-400 hover:text-yellow-500 transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </button>
+                    <span class="text-sm text-gray-500">${post.rating_count > 0 ? (post.rating_total / post.rating_count).toFixed(1) : '0'}/5</span>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="prose prose-lg max-w-none">
+                <div class="text-gray-700 leading-relaxed text-lg">
+                    ${post.content.split('\n').map(paragraph => 
+                        paragraph.trim() ? `<p class="mb-6">${paragraph}</p>` : ''
+                    ).join('')}
                 </div>
             </div>
             
             ${adminNoteHtml}
 
-            <div class="mt-8 pt-4 border-t-2 border-dashed border-gray-300 flex items-center justify-end space-x-4">
-                <div class="text-right">
-                    <p class="text-sm text-gray-500">Bài viết được chia sẻ bởi:</p>
-                    <a href="profile.html" class="text-lg font-bold text-teal-600 hover:text-teal-800">${post.author_username}</a>
-                    <p class="text-xs text-gray-500">Người nuôi có kinh nghiệm</p>
+            <!-- Tags -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-wrap items-center space-x-2">
+                    <span class="text-sm font-medium text-gray-500">Từ khóa:</span>
+                    <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-sm">${post.category}</span>
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">Thủy sản</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Trà Vinh</span>
                 </div>
-                <a href="profile.html">
-                    <img src="img/avt1.jpg" alt="Avatar" class="w-16 h-16 rounded-full border-2 border-teal-500">
-                </a>
             </div>
 
-            <div class="mt-10 pt-6 border-t">
-                <a href="tintuc.html" class="inline-flex items-center text-teal-600 hover:text-teal-800 font-medium">
-                    ← Quay lại trang Tin Tức
-                </a>
+            <!-- Action Buttons -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex justify-center space-x-4">
+                <button onclick="shareArticle()" class="flex items-center space-x-2 text-gray-500 hover:text-blue-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                    </svg>
+                    <span>Chia sẻ</span>
+                </button>
+                <button onclick="bookmarkArticle()" class="flex items-center space-x-2 text-gray-500 hover:text-yellow-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                    </svg>
+                    <span>Lưu bài</span>
+                </button>
             </div>
         </div>
     `;
     
     container.innerHTML = contentHtml;
+    
+    // Cập nhật thông tin tác giả
+    if (authorCard) {
+        authorCard.classList.remove('hidden');
+        const authorName = authorCard.querySelector('#author-name');
+        const authorAvatar = authorCard.querySelector('#author-avatar');
+        
+        if (authorName) {
+            authorName.textContent = post.author_username;
+        }
+        
+        // Tạo avatar tự động từ tên
+        if (authorAvatar) {
+            authorAvatar.outerHTML = generateAvatar(post.author_username, 'w-16 h-16', 'text-xl');
+        }
+    }
+    
+    // Load related articles
+    loadRelatedArticles(post.category, post.id);
 }
 window.renderPostDetail = renderPostDetail;
 
@@ -925,11 +1089,111 @@ function initializeCarousel() {
     // Tự động chuyển slide mỗi 5 giây
     setInterval(nextSlide, 5000); 
 }
-window.initializeCarousel = initializeCarousel; // Cần thiết để hàm được gọi
+window.initializeCarousel = initializeCarousel;
 
-// =========================================================
-// CHỨC NĂNG: CHỈNH SỬA THÔNG TIN PROFILE
-// =========================================================
+// Load thống kê cho sidebar
+// Load thống kê cho sidebar
+async function loadHomeStats() {
+    try {
+        // Load thống kê từ API mới
+        const statsResponse = await fetch(apiUrl('db.php/get_user_stats.php'));
+        const statsResult = await statsResponse.json();
+        
+        if (statsResult.success) {
+            const stats = statsResult.stats;
+            
+            // Cập nhật tổng số bài viết
+            const totalPostsElement = document.getElementById('total-posts');
+            if (totalPostsElement) {
+                totalPostsElement.textContent = stats.total_posts;
+            }
+            
+            // Cập nhật tổng số thành viên (dùng số liệu thật)
+            const totalUsersElement = document.getElementById('total-users');
+            if (totalUsersElement) {
+                totalUsersElement.textContent = stats.total_users;
+            }
+            
+            // Cập nhật số bài viết hôm nay
+            const todayPostsElement = document.getElementById('today-posts');
+            if (todayPostsElement) {
+                todayPostsElement.textContent = stats.today_posts;
+            }
+        } else {
+            console.error('Lỗi API thống kê:', statsResult.message);
+            // Fallback: hiển thị dấu gạch ngang nếu lỗi
+            document.getElementById('total-posts').textContent = '-';
+            document.getElementById('total-users').textContent = '-';
+            document.getElementById('today-posts').textContent = '-';
+        }
+        
+    } catch (error) {
+        console.error('Lỗi load thống kê:', error);
+        // Fallback: hiển thị dấu gạch ngang nếu lỗi
+        const totalPostsElement = document.getElementById('total-posts');
+        const totalUsersElement = document.getElementById('total-users');
+        const todayPostsElement = document.getElementById('today-posts');
+        
+        if (totalPostsElement) totalPostsElement.textContent = '-';
+        if (totalUsersElement) totalUsersElement.textContent = '-';
+        if (todayPostsElement) todayPostsElement.textContent = '-';
+    }
+}
+
+// Load tin tức preview cho trang chủ
+async function loadNewsPreview() {
+    try {
+        const response = await fetch(apiUrl('db.php/get_posts.php?status=approved&limit=3'));
+        const result = await response.json();
+        
+        const newsPreviewElement = document.getElementById('news-preview');
+        if (!newsPreviewElement) return;
+        
+        if (result.success && result.posts.length > 0) {
+            const newsHtml = result.posts.map(post => {
+                const postDate = new Date(post.created_at).toLocaleDateString('vi-VN');
+                const shortTitle = post.title.length > 60 ? post.title.substring(0, 60) + '...' : post.title;
+                const shortContent = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content;
+                
+                // Xử lý ảnh
+                let imageUrl;
+                if (post.image_url && post.image_url.trim() !== '') {
+                    imageUrl = 'uploads/' + post.image_url;
+                } else {
+                    const imageNum = ((post.id - 1) % 5) + 1;
+                    imageUrl = 'img/' + imageNum + '.jpg';
+                }
+                
+                return `
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
+                        <img src="${imageUrl}" alt="${post.title}" class="w-full h-32 object-cover">
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded">${post.category}</span>
+                                <span class="text-xs text-gray-500">${postDate}</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2 text-sm leading-tight">${shortTitle}</h3>
+                            <p class="text-gray-600 text-xs mb-3 leading-relaxed">${shortContent}</p>
+                            <a href="chitiet.html?id=${post.id}" class="text-teal-600 hover:text-teal-700 text-xs font-medium">
+                                Đọc thêm →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            newsPreviewElement.innerHTML = newsHtml;
+        } else {
+            newsPreviewElement.innerHTML = '<div class="col-span-3 text-center text-gray-500 py-8">Chưa có tin tức mới</div>';
+        }
+    } catch (error) {
+        console.error('Lỗi load tin tức preview:', error);
+        const newsPreviewElement = document.getElementById('news-preview');
+        if (newsPreviewElement) {
+            newsPreviewElement.innerHTML = '<div class="col-span-3 text-center text-red-500 py-8">Lỗi tải tin tức</div>';
+        }
+    }
+}
 
 window.openEditModal = function() {
     // Lấy thông tin hiện tại từ session
@@ -1115,6 +1379,137 @@ function removeTypingIndicator() {
 window.toggleChatbot = toggleChatbot;
 window.handleChatKeyPress = handleChatKeyPress;
 window.sendChatMessage = sendChatMessage;
+
+// =========================================================
+// CHỨC NĂNG: CÁC HÀNH ĐỘNG CHO TRANG CHI TIẾT
+// =========================================================
+
+// Chia sẻ bài viết
+function shareArticle() {
+    const url = window.location.href;
+    const title = document.title;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).catch(console.error);
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Đã sao chép link bài viết vào clipboard!');
+        }).catch(() => {
+            // Fallback cho trình duyệt cũ
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Đã sao chép link bài viết!');
+        });
+    }
+}
+
+// Lưu bài viết
+function bookmarkArticle() {
+    const postId = new URLSearchParams(window.location.search).get('id');
+    const title = document.querySelector('h1').textContent;
+    
+    // Lưu vào localStorage (có thể mở rộng thành API sau)
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarkedArticles') || '[]');
+    
+    const bookmark = {
+        id: postId,
+        title: title,
+        url: window.location.href,
+        savedAt: new Date().toISOString()
+    };
+    
+    // Kiểm tra đã lưu chưa
+    if (bookmarks.find(b => b.id === postId)) {
+        alert('Bài viết đã được lưu trước đó!');
+        return;
+    }
+    
+    bookmarks.push(bookmark);
+    localStorage.setItem('bookmarkedArticles', JSON.stringify(bookmarks));
+    alert('✅ Đã lưu bài viết vào danh sách yêu thích!');
+}
+
+// In bài viết
+function printArticle() {
+    window.print();
+}
+
+// Đánh giá bài viết
+function rateArticle(rating) {
+    const postId = new URLSearchParams(window.location.search).get('id');
+    
+    // Lưu đánh giá vào localStorage (có thể mở rộng thành API sau)
+    let ratings = JSON.parse(localStorage.getItem('articleRatings') || '{}');
+    ratings[postId] = rating;
+    localStorage.setItem('articleRatings', JSON.stringify(ratings));
+    
+    alert(`Cảm ơn bạn đã đánh giá ${rating} sao cho bài viết này!`);
+}
+
+// Xem hồ sơ tác giả
+function viewAuthorProfile() {
+    // Chuyển đến trang profile (có thể mở rộng để xem profile của tác giả khác)
+    window.location.href = 'profile.html';
+}
+
+// Load bài viết liên quan
+async function loadRelatedArticles(category, currentPostId) {
+    const container = document.getElementById('related-articles');
+    if (!container) return;
+    
+    try {
+        // Lấy 3 bài viết cùng category, khác ID hiện tại
+        const posts = await fetchPosts({ 
+            status: 'approved', 
+            limit: 3,
+            category: category 
+        });
+        
+        const relatedPosts = posts.filter(post => post.id != currentPostId).slice(0, 3);
+        
+        if (relatedPosts.length > 0) {
+            const relatedHtml = relatedPosts.map(post => {
+                const postDate = new Date(post.created_at).toLocaleDateString('vi-VN');
+                const shortTitle = post.title.length > 50 ? post.title.substring(0, 50) + '...' : post.title;
+                
+                return `
+                    <div class="border-b border-gray-100 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                        <a href="chitiet.html?id=${post.id}" class="block hover:bg-gray-50 p-2 rounded transition">
+                            <h4 class="font-medium text-gray-800 text-sm leading-tight mb-1">${shortTitle}</h4>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>${post.author_username}</span>
+                                <span>${postDate}</span>
+                            </div>
+                        </a>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = relatedHtml;
+        } else {
+            container.innerHTML = '<p class="text-sm text-gray-500">Không có bài viết liên quan.</p>';
+        }
+    } catch (error) {
+        console.error('Lỗi load bài viết liên quan:', error);
+        container.innerHTML = '<p class="text-sm text-red-500">Lỗi tải bài viết liên quan.</p>';
+    }
+}
+
+// Export các hàm mới
+window.shareArticle = shareArticle;
+window.bookmarkArticle = bookmarkArticle;
+window.printArticle = printArticle;
+window.rateArticle = rateArticle;
+window.viewAuthorProfile = viewAuthorProfile;
+window.loadRelatedArticles = loadRelatedArticles;
 
 
 // =========================================================

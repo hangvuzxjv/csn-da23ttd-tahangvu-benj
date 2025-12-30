@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kỹ Thuật Nuôi Trồng Chuyên Sâu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="config.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50">
@@ -44,6 +45,9 @@
             </nav>
 
             <div class="flex items-center space-x-4">
+                
+                <div class="relative hidden sm:block"><input type="text" id="search-input" placeholder="Tìm kiếm... (Enter)" onkeypress="if(event.key==='Enter') performSearch()" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm w-64 bg-white hover:border-teal-400 transition shadow-sm"></div>
+                
                 <div id="auth-buttons">
                     <a href="dangnhap.html" class="text-sm font-medium text-gray-700 hover:text-teal-600 transition">Đăng Nhập</a>
                     <a href="dangky.html" class="ml-2 px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-full hover:bg-teal-700 transition">Đăng Ký</a>
@@ -60,7 +64,7 @@
                     </div>
                 </div>
 
-                <button id="mobile-menu-toggle" class="lg:hidden text-gray-200 hover:text-teal-300 text-2xl">☰</button>
+                 <button id="mobile-menu-toggle" class="lg:hidden text-gray-700 hover:text-teal-600 transition">☰</button>
             </div>
         </div>
 
@@ -75,155 +79,155 @@
     </header>
 
     <main class="container mx-auto px-4 py-10">
-        <!-- Breadcrumb -->
-        <nav class="flex mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="index.html" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-teal-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                        </svg>
-                        Trang Chủ
-                    </a>
-                </li>
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Kỹ Thuật Nuôi Trồng</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+     
         
-        <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Kỹ Thuật Nuôi Trồng Chuyên Sâu</h1>
-        <p class="text-gray-600 mb-8">Tìm kiếm các quy trình và kinh nghiệm nuôi trồng các loài thủy sản tại Trà Vinh.</p>
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Kỹ Thuật Nuôi Trồng Thủy Sản</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                Tài liệu kỹ thuật chuyên sâu về nuôi trồng các loài thủy sản phổ biến tại Trà Vinh, 
+                từ chuẩn bị ao nuôi đến thu hoạch và tiêu thụ sản phẩm.
+            </p>
+        </div>
         
-        <!-- Hero Section - 2 Mục Chính -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">Chọn Loại Thủy Sản Bạn Muốn Tìm Hiểu</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- Main Content Area -->
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 
-                <!-- Mục Tôm -->
-                <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300" onclick="window.location.href='tom-nuoi.html'">
-                    <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent group-hover:border-orange-400 group-hover:shadow-orange-200/50">
-                        <div class="relative h-64 overflow-hidden">
-                            <img src="img/tom1.jpg" alt="Kỹ thuật nuôi tôm" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 text-white">
-                                <div class="text-4xl mb-2"></div>
-                                <h3 class="text-2xl font-bold mb-1">Kỹ Thuật Nuôi Tôm</h3>
-                                <p class="text-sm opacity-90">Tôm thẻ, tôm sú, tôm càng xanh</p>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Chuyên Sâu Nuôi Tôm</h4>
-                                    <p class="text-gray-600 text-sm mb-3">Quy trình, kỹ thuật và kinh nghiệm nuôi các loại tôm phổ biến tại Trà Vinh</p>
-                                    <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                        <span class="flex items-center"><span class="w-2 h-2 bg-orange-400 rounded-full mr-1"></span>15+ bài viết</span>
-                                        <span class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>Cập nhật mới</span>
+                <!-- Content Area -->
+                <div class="lg:col-span-3 lg:order-1">
+                    <!-- Category Selection -->
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6">Danh Mục Chính</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- Tôm Category -->
+                            <div class="group cursor-pointer" onclick="window.location.href='tom-nuoi.html'">
+                                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 hover:border-teal-300">
+                                    <div class="relative h-32 overflow-hidden">
+                                        <img src="img/tom1.jpg" alt="Kỹ thuật nuôi tôm" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                        <div class="absolute bottom-2 left-3 text-white">
+                                            <h3 class="text-lg font-semibold">Kỹ Thuật Nuôi Tôm</h3>
+                                            <p class="text-xs opacity-90">Tôm thẻ, tôm sú, tôm càng xanh</p>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <p class="text-gray-600 text-sm mb-3">
+                                            
+                                        </p>
+                                        <div class="flex justify-between items-center text-sm text-gray-500">
+                                            <span>15+ bài viết</span>
+                                            <span class="text-teal-600 font-medium">Xem chi tiết →</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-orange-500 group-hover:text-orange-600 transition-colors">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                    </svg>
-                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Mục Cá -->
-                <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300" onclick="window.location.href='ca-nuoi.html'">
-                    <div class="bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent group-hover:border-blue-400 group-hover:shadow-blue-200/50">
-                        <div class="relative h-64 overflow-hidden">
-                            <img src="img/banner2.jpg" alt="Kỹ thuật nuôi cá" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 text-white">
-                                <div class="text-4xl mb-2"></div>
-                                <h3 class="text-2xl font-bold mb-1">Kỹ Thuật Nuôi Cá</h3>
-                                <p class="text-sm opacity-90">Cá tra, cá rô phi, cá chép</p>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Chuyên Sâu Nuôi Cá</h4>
-                                    <p class="text-gray-600 text-sm mb-3">Hướng dẫn nuôi cá nước ngọt, kỹ thuật và phòng bệnh hiệu quả</p>
-                                    <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                        <span class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-1"></span>12+ bài viết</span>
-                                        <span class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>Phổ biến</span>
+                            <!-- Cá Category -->
+                            <div class="group cursor-pointer" onclick="window.location.href='ca-nuoi.html'">
+                                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 hover:border-teal-300">
+                                    <div class="relative h-32 overflow-hidden">
+                                        <img src="img/banner2.jpg" alt="Kỹ thuật nuôi cá" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                        <div class="absolute bottom-2 left-3 text-white">
+                                            <h3 class="text-lg font-semibold">Kỹ Thuật Nuôi Cá</h3>
+                                            <p class="text-xs opacity-90">Cá tra, cá rô phi, cá chép</p>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <p class="text-gray-600 text-sm mb-3">
+                                            
+                                        </p>
+                                        <div class="flex justify-between items-center text-sm text-gray-500">
+                                            <span>12+ bài viết</span>
+                                            <span class="text-teal-600 font-medium">Xem chi tiết →</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-blue-500 group-hover:text-blue-600 transition-colors">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                    </svg>
-                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Results Header -->
+                    <div class="mb-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2 sm:mb-0">Tài Liệu Kỹ Thuật</h2>
+                            <div class="text-sm text-gray-500">
+                                <span id="results-count">Đang tải...</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-            </div>
-        </section>
-        
-        <div class="flex flex-col lg:flex-row gap-8">
-            
-            <div class="w-full lg:w-1/4 p-4 bg-white rounded-xl shadow-lg h-fit">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">🔍 Tìm Kiếm Kỹ Thuật</h3>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tìm theo từ khóa</label>
-                    <input type="text" id="keyword-search" placeholder="Nhập từ khóa..." class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-teal-500 focus:border-teal-500">
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Chủ đề</label>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="topic" value="" class="text-teal-600 focus:ring-teal-500" checked>
-                            <span class="text-sm">Tất cả</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="topic" value="tôm" class="text-teal-600 focus:ring-teal-500">
-                            <span class="text-sm"> Nuôi Tôm</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="topic" value="cá" class="text-teal-600 focus:ring-teal-500">
-                            <span class="text-sm"> Nuôi Cá</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="topic" value="trai" class="text-teal-600 focus:ring-teal-500">
-                            <span class="text-sm"> Nuôi Trai/Sò</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="topic" value="cua" class="text-teal-600 focus:ring-teal-500">
-                            <span class="text-sm">Nuôi Cua</span>
-                        </label>
+
+                    <!-- Articles List -->
+                    <div id="kythuat-nuoi-list" class="space-y-6">
+                        <div class="text-center py-12">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                            <p class="text-gray-500 mt-4">Đang tải tài liệu...</p>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="kythuat-nuoi-pagination" class="mt-8">
+                        <!-- Sẽ được tạo bằng JavaScript -->
                     </div>
                 </div>
-                
-                <button onclick="filterKyThuatNuoi()" class="w-full bg-teal-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-700 transition shadow-md">
-                    🔍 Tìm Kiếm
-                </button>
-                
-                <button onclick="resetFilter()" class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition mt-2">
-                    ↻ Đặt Lại
-                </button>
-            </div>
 
-            <div class="w-full lg:w-3/4 space-y-6">
-                <div id="kythuat-nuoi-list">
-                    <p class="text-center text-gray-400 py-10">Đang tải...</p>
-                </div>
-
-                <div id="kythuat-nuoi-pagination" class="flex justify-center pt-6">
-                    <!-- Sẽ được tạo bằng JavaScript -->
+                <!-- Sidebar Filter -->
+                <div class="lg:col-span-1 lg:order-2">
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 sticky top-24">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-6 pb-3 border-b border-gray-200">
+                            Bộ Lọc Tìm Kiếm
+                        </h3>
+                        
+                        <!-- Search Input -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Từ khóa</label>
+                            <input type="text" id="keyword-search" 
+                                   placeholder="Nhập từ khóa tìm kiếm..." 
+                                   class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors">
+                        </div>
+                        
+                        <!-- Topic Filter -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Chủ đề</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="topic" value="" class="text-teal-600 focus:ring-teal-500" checked>
+                                    <span class="ml-3 text-sm text-gray-700">Tất cả chủ đề</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="topic" value="tôm" class="text-teal-600 focus:ring-teal-500">
+                                    <span class="ml-3 text-sm text-gray-700">Nuôi Tôm</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="topic" value="cá" class="text-teal-600 focus:ring-teal-500">
+                                    <span class="ml-3 text-sm text-gray-700">Nuôi Cá</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="topic" value="trai" class="text-teal-600 focus:ring-teal-500">
+                                    <span class="ml-3 text-sm text-gray-700">Nuôi Trai/Sò</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="topic" value="cua" class="text-teal-600 focus:ring-teal-500">
+                                    <span class="ml-3 text-sm text-gray-700">Nuôi Cua</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="space-y-3">
+                            <button onclick="filterKyThuatNuoi()" 
+                                    class="w-full bg-teal-600 text-white py-3 rounded-lg text-sm font-semibold hover:bg-teal-700 transition-colors">
+                                Tìm Kiếm
+                            </button>
+                            <button onclick="resetFilter()" 
+                                    class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                                Đặt Lại Bộ Lọc
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -283,15 +287,15 @@
     
     <!-- Chatbot Widget -->
     <div id="chatbot-toggle" class="fixed bottom-6 right-6 z-50">
-        <button onclick="toggleChatbot()" class="bg-teal-600 text-white p-4 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 text-2xl">
-            🤖
+        <button onclick="toggleChatbot()" class="bg-teal-600 text-white p-4 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 text-sm font-medium">
+            AI
         </button>
     </div>
 
     <div id="chatbot-window" class="fixed bottom-24 right-6 w-80 bg-white rounded-lg shadow-2xl z-50 hidden">
         <div class="bg-teal-600 text-white p-4 rounded-t-lg">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold">🤖 Trợ Lý Kỹ Thuật</h3>
+                <h3 class="font-semibold">Trợ Lý Kỹ Thuật</h3>
                 <button onclick="toggleChatbot()" class="text-white hover:text-gray-200 text-xl">&times;</button>
             </div>
         </div>

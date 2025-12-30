@@ -34,7 +34,7 @@
                     <!-- Dropdown content -->
                     <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                         <a href="kythuat-nuoi.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition"> Kỹ Thuật Nuôi Tôm/Cá</a>
-                        <a href="benh-thuy-san.html" class="block px-4 py-2 text-sm text-teal-600 bg-teal-50 font-semibold transition">🦠 Bệnh Thủy Sản</a>
+                        <a href="benh-thuy-san.html" class="block px-4 py-2 text-sm text-teal-600 bg-teal-50 font-semibold transition">Bệnh Thủy Sản</a>
                         
                         
                         
@@ -81,27 +81,7 @@
     </header>
 
     <main class="container mx-auto px-4 py-10">
-        <!-- Breadcrumb -->
-        <nav class="flex mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="index.html" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-teal-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                        </svg>
-                        Trang Chủ
-                    </a>
-                </li>
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Bệnh Thủy Sản</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        
 
         <!-- Hero Section -->
         <section class="mb-12">
@@ -161,15 +141,15 @@
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="radio" name="species" value="tom" class="text-red-600 focus:ring-red-500">
-                            <span class="text-sm"> Tôm (Thẻ, Sú)</span>
+                            <span class="text-sm">Tôm (Thẻ, Sú)</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="radio" name="species" value="ca" class="text-red-600 focus:ring-red-500">
-                            <span class="text-sm"> Cá (Tra, Lóc, Rô Phi)</span>
+                            <span class="text-sm">Cá (Tra, Lóc, Rô Phi)</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="radio" name="species" value="nhuyen-the" class="text-red-600 focus:ring-red-500">
-                            <span class="text-sm"> Nhuyễn Thể (Nghêu, Sò)</span>
+                            <span class="text-sm">Nhuyễn Thể (Nghêu, Sò)</span>
                         </label>
                     </div>
                 </div>
@@ -179,25 +159,25 @@
                     <div class="space-y-2">
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="checkbox" class="text-red-600 focus:ring-red-500">
-                            <span class="text-sm"> Cực kỳ nguy hiểm</span>
+                            <span class="text-sm">Cực kỳ nguy hiểm</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="checkbox" class="text-yellow-600 focus:ring-yellow-500">
-                            <span class="text-sm"> Nguy hiểm</span>
+                            <span class="text-sm">Nguy hiểm</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="checkbox" class="text-blue-600 focus:ring-blue-500">
-                            <span class="text-sm"> Trung bình</span>
+                            <span class="text-sm">Trung bình</span>
                         </label>
                     </div>
                 </div>
                 
                 <button onclick="filterDiseases()" class="w-full bg-gray-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-700 transition shadow-md">
-                    🔍 Tìm Kiếm Bệnh
+                    Tìm Kiếm Bệnh
                 </button>
                 
                 <button onclick="resetFilter()" class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition mt-2">
-                    ↻ Đặt Lại
+                    Đặt Lại
                 </button>
             </div>
 
@@ -205,7 +185,7 @@
                 
                 <!-- Bệnh Cực Kỳ Nguy Hiểm -->
                 <div class="bg-gray-50 border-l-4 border-gray-400 p-4 rounded-lg mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">🚨 Bệnh Cực Kỳ Nguy Hiểm - Cần Xử Lý Khẩn Cấp</h2>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Bệnh Cực Kỳ Nguy Hiểm - Cần Xử Lý Khẩn Cấp</h2>
                     <p class="text-gray-700 text-sm">Các bệnh này có thể gây chết hàng loạt trong thời gian ngắn. Cần phát hiện sớm và xử lý ngay lập tức.</p>
                 </div>
 
@@ -213,7 +193,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded"> Tôm | Virus</span>
+                                <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded">Tôm | Virus</span>
                                 <span class="text-xs font-bold text-white bg-red-600 px-2 py-0.5 rounded">CỰC NGUY HIỂM</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-red-600">
@@ -249,7 +229,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded">🦐 Tôm | Vi Khuẩn</span>
+                                <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded">Tôm | Vi Khuẩn</span>
                                 <span class="text-xs font-bold text-white bg-red-600 px-2 py-0.5 rounded">CỰC NGUY HIỂM</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-red-600">
@@ -274,7 +254,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>🧪 Xét nghiệm PCR khuyến nghị</span>
+                            <span>Xét nghiệm PCR khuyến nghị</span>
                         </div>
                         <a href="#benh-gan-tuy" class="text-red-600 font-medium hover:underline text-sm">Xem Phác Đồ Điều Trị →</a>
                     </div>
@@ -282,7 +262,7 @@
 
                 <!-- Bệnh Nguy Hiểm -->
                 <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg mb-6 mt-8">
-                    <h2 class="text-xl font-bold text-yellow-700 mb-2">⚠️ Bệnh Nguy Hiểm - Cần Theo Dõi Chặt Chẽ</h2>
+                    <h2 class="text-xl font-bold text-yellow-700 mb-2">Bệnh Nguy Hiểm - Cần Theo Dõi Chặt Chẽ</h2>
                     <p class="text-yellow-600 text-sm">Các bệnh này có thể gây thiệt hại lớn nếu không được phát hiện và xử lý kịp thời.</p>
                 </div>
                 
@@ -290,7 +270,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded">🐟 Cá | Ký Sinh Trùng</span>
+                                <span class="text-xs font-semibold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded">Cá | Ký Sinh Trùng</span>
                                 <span class="text-xs font-bold text-white bg-yellow-600 px-2 py-0.5 rounded">NGUY HIỂM</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-yellow-600">
@@ -315,7 +295,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>🌡️ Kiểm tra chất lượng nước</span>
+                            <span>Kiểm tra chất lượng nước</span>
                         </div>
                         <a href="#benh-lo-loet" class="text-yellow-600 font-medium hover:underline text-sm">Xem Hướng Dẫn Điều Trị →</a>
                     </div>
@@ -325,7 +305,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded">🦐 Tôm | Vi Khuẩn</span>
+                                <span class="text-xs font-semibold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded">Tôm | Vi Khuẩn</span>
                                 <span class="text-xs font-bold text-white bg-yellow-600 px-2 py-0.5 rounded">NGUY HIỂM</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-yellow-600">
@@ -350,7 +330,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>🔬 Kiểm tra ban đêm</span>
+                            <span>Kiểm tra ban đêm</span>
                         </div>
                         <a href="#benh-vibrio" class="text-yellow-600 font-medium hover:underline text-sm">Xem Phác Đồ Điều Trị →</a>
                     </div>
@@ -358,7 +338,7 @@
 
                 <!-- Bệnh Trung Bình -->
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-6 mt-8">
-                    <h2 class="text-xl font-bold text-blue-700 mb-2">ℹ️ Bệnh Thường Gặp - Có Thể Điều Trị</h2>
+                    <h2 class="text-xl font-bold text-blue-700 mb-2">Bệnh Thường Gặp - Có Thể Điều Trị</h2>
                     <p class="text-blue-600 text-sm">Các bệnh này thường gặp nhưng có thể điều trị hiệu quả nếu phát hiện sớm.</p>
                 </div>
 
@@ -366,7 +346,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">🐟 Cá | Nấm</span>
+                                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Cá | Nấm</span>
                                 <span class="text-xs font-bold text-white bg-blue-600 px-2 py-0.5 rounded">TRUNG BÌNH</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-blue-600">
@@ -391,7 +371,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>🧂 Tắm muối 3-5‰</span>
+                            <span>Tắm muối 3-5‰</span>
                         </div>
                         <a href="#benh-nam" class="text-blue-600 font-medium hover:underline text-sm">Xem Hướng Dẫn →</a>
                     </div>
@@ -401,7 +381,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">🦐 Tôm | Ký Sinh</span>
+                                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Tôm | Ký Sinh</span>
                                 <span class="text-xs font-bold text-white bg-blue-600 px-2 py-0.5 rounded">TRUNG BÌNH</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-blue-600">
@@ -426,7 +406,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>💧 Thay nước 30-50%</span>
+                            <span>Thay nước 30-50%</span>
                         </div>
                         <a href="#benh-zoothamnium" class="text-blue-600 font-medium hover:underline text-sm">Xem Hướng Dẫn →</a>
                     </div>
@@ -436,7 +416,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-0.5 rounded">🐟 Cá | Vi Khuẩn</span>
+                                <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-0.5 rounded">Cá | Vi Khuẩn</span>
                                 <span class="text-xs font-bold text-white bg-green-600 px-2 py-0.5 rounded">NHẸ</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-green-600">
@@ -461,7 +441,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>💊 Oxytetracycline 50mg/kg thức ăn</span>
+                            <span>Oxytetracycline 50mg/kg thức ăn</span>
                         </div>
                         <a href="#benh-xuất-huyết" class="text-green-600 font-medium hover:underline text-sm">Xem Hướng Dẫn →</a>
                     </div>
@@ -471,7 +451,7 @@
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-0.5 rounded">🦪 Nghêu | Ký Sinh</span>
+                                <span class="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-0.5 rounded">Nghêu | Ký Sinh</span>
                                 <span class="text-xs font-bold text-white bg-blue-600 px-2 py-0.5 rounded">TRUNG BÌNH</span>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-purple-600">
@@ -496,7 +476,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-3 border-t">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
-                            <span>🌡️ Tránh nhiệt độ > 30°C</span>
+                            <span>Tránh nhiệt độ > 30°C</span>
                         </div>
                         <a href="#benh-perkinsus" class="text-purple-600 font-medium hover:underline text-sm">Xem Hướng Dẫn →</a>
                     </div>
@@ -511,7 +491,7 @@
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-2">
-                                    <span class="text-xs font-semibold text-orange-600 bg-orange-100 px-2 py-0.5 rounded">🦐 Tôm | Nấm</span>
+                                    <span class="text-xs font-semibold text-orange-600 bg-orange-100 px-2 py-0.5 rounded">Tôm | Nấm</span>
                                     <span class="text-xs font-bold text-white bg-blue-600 px-2 py-0.5 rounded">TRUNG BÌNH</span>
                                 </div>
                                 <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-orange-600">
@@ -536,7 +516,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-3 border-t">
                             <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>🧪 Kiểm tra pH nước</span>
+                                <span>Kiểm tra pH nước</span>
                             </div>
                             <a href="#benh-nam-den" class="text-orange-600 font-medium hover:underline text-sm">Xem Hướng Dẫn →</a>
                         </div>
@@ -546,7 +526,7 @@
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-2">
-                                    <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded">🐟 Cá | Virus</span>
+                                    <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded">Cá | Virus</span>
                                     <span class="text-xs font-bold text-white bg-yellow-600 px-2 py-0.5 rounded">NGUY HIỂM</span>
                                 </div>
                                 <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-indigo-600">
@@ -571,7 +551,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-3 border-t">
                             <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>❄️ Nhiệt độ thấp làm tăng nguy cơ</span>
+                                <span>Nhiệt độ thấp làm tăng nguy cơ</span>
                             </div>
                             <a href="#benh-vhs" class="text-indigo-600 font-medium hover:underline text-sm">Xem Phác Đồ →</a>
                         </div>
@@ -581,7 +561,7 @@
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-2">
-                                    <span class="text-xs font-semibold text-pink-600 bg-pink-100 px-2 py-0.5 rounded">🦪 Sò | Môi Trường</span>
+                                    <span class="text-xs font-semibold text-pink-600 bg-pink-100 px-2 py-0.5 rounded">Sò | Môi Trường</span>
                                     <span class="text-xs font-bold text-white bg-green-600 px-2 py-0.5 rounded">NHẸ</span>
                                 </div>
                                 <h3 class="text-2xl font-bold text-gray-800 mb-2 hover:text-pink-600">
@@ -606,7 +586,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-3 border-t">
                             <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>🌊 Kiểm tra độ mặn, pH</span>
+                                <span>Kiểm tra độ mặn, pH</span>
                             </div>
                             <a href="#benh-stress-moi-truong" class="text-pink-600 font-medium hover:underline text-sm">Xem Hướng Dẫn →</a>
                         </div>
@@ -631,13 +611,13 @@
         <!-- Hướng dẫn khẩn cấp -->
         <section class="mt-12 mb-8">
             <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">🚨 Hướng Dẫn Xử Lý Khẩn Cấp</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Hướng Dẫn Xử Lý Khẩn Cấp</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     <div class="bg-white rounded-lg p-6 shadow-md">
                         <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                            <span class="text-2xl mr-2">⚡</span>
+                            <span class="text-2xl mr-2"></span>
                             Khi Phát Hiện Bệnh
                         </h3>
                         <ul class="space-y-2 text-sm text-gray-600">
@@ -651,7 +631,7 @@
 
                     <div class="bg-white rounded-lg p-6 shadow-md">
                         <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                            <span class="text-2xl mr-2">📞</span>
+                            <span class="text-2xl mr-2"></span>
                             Liên Hệ Hỗ Trợ 24/7
                         </h3>
                         <ul class="space-y-2 text-sm text-gray-600">
@@ -667,7 +647,7 @@
 
                 <div class="mt-6 text-center">
                     <div class="bg-red-100 border border-red-300 rounded-lg p-4">
-                        <p class="text-red-700 font-semibold">⚠️ LƯU Ý QUAN TRỌNG</p>
+                        <p class="text-red-700 font-semibold">LƯU Ý QUAN TRỌNG</p>
                         <p class="text-red-600 text-sm mt-1">
                             Không tự ý sử dụng kháng sinh hoặc hóa chất mà chưa được hướng dẫn. 
                             Việc sử dụng sai có thể làm tình hình trở nên nghiêm trọng hơn.
@@ -688,7 +668,7 @@
                     Cổng thông tin kỹ thuật nuôi trồng thủy sản tập trung vào kinh nghiệm và tài liệu dành cho người nuôi tại tỉnh Trà Vinh.
                 </p>
                 <div class="flex space-x-4 mt-4">
-                    <a href="#" class="text-white hover:text-teal-400 transition">📘</a> <a href="#" class="text-white hover:text-teal-400 transition">📺</a> <a href="#" class="text-white hover:text-teal-400 transition">📧</a> </div>
+                    <a href="#" class="text-white hover:text-teal-400 transition">FB</a> <a href="#" class="text-white hover:text-teal-400 transition">YT</a> <a href="#" class="text-white hover:text-teal-400 transition">Email</a> </div>
             </div>
 
             <div>
@@ -733,14 +713,14 @@
     <!-- Chatbot Widget -->
     <div id="chatbot-toggle" class="fixed bottom-6 right-6 z-50">
         <button onclick="toggleChatbot()" class="bg-teal-600 text-white p-4 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 text-2xl">
-            🤖
+            AI
         </button>
     </div>
 
     <div id="chatbot-window" class="fixed bottom-24 right-6 w-80 bg-white rounded-lg shadow-2xl z-50 hidden">
         <div class="bg-teal-600 text-white p-4 rounded-t-lg">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold">🤖 Trợ Lý Kỹ Thuật</h3>
+                <h3 class="font-bold">Trợ Lý Kỹ Thuật</h3>
                 <button onclick="toggleChatbot()" class="text-white hover:text-gray-200 text-xl">&times;</button>
             </div>
         </div>

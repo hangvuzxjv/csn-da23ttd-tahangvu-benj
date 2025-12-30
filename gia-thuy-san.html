@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giá Thủy Sản - Thủy Sản Trà Vinh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="flex items-center space-x-3 hover:opacity-90 transition">
+                    <img src="img/logo.png" alt="Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold text-teal-600">Thủy Sản</span>
+                </a>
+            </div>
+
+            <nav class="hidden lg:flex space-x-8 text-base font-medium">
+                <a href="index.html" class="text-gray-700 hover:text-teal-600 transition">Trang Chủ</a>
+                <a href="tintuc.html" class="text-gray-700 hover:text-teal-600 transition">Tin Tức</a>
+                
+                <div class="relative group">
+                    <a href="kythuat-nuoi.html" class="text-gray-700 hover:text-teal-600 transition flex items-center">
+                        Thông tin/Kỹ Thuật Nuôi Trồng
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <a href="kythuat-nuoi.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition">Kỹ Thuật Nuôi Tôm/Cá</a>
+                        <a href="benh-thuy-san.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition">Bệnh Thủy Sản</a>
+                    </div>
+                </div>
+                
+                <a href="gia-thuy-san.html" class="text-teal-600 font-semibold">Giá Thủy Sản</a>
+                <a href="dangtin.html" class="text-gray-700 hover:text-teal-600 transition">Đăng Tin</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden sm:block">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm... (Enter)" 
+                           onkeypress="if(event.key==='Enter') performSearch()" 
+                           class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm w-64 bg-white hover:border-teal-400 transition shadow-sm">
+                </div>
+                
+                <div id="auth-buttons">
+                    <a href="dangnhap.html" class="text-sm font-medium text-gray-700 hover:text-teal-600 transition">Đăng Nhập</a>
+                    <a href="dangky.html" class="ml-2 px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-full hover:bg-teal-700 transition">Đăng Ký</a>
+                </div>
+
+                <div id="user-menu" class="hidden relative">
+                    <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-teal-600 transition">
+                        <div id="user-avatar" class="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-medium"></div>
+                        <span id="user-name" class="text-sm font-medium"></span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50 hidden">
+                        <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition">Hồ Sơ</a>
+                        <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition">Đăng Xuất</a>
+                    </div>
+                </div>
+
+                <button class="lg:hidden text-gray-700 hover:text-teal-600 transition" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="lg:hidden bg-white border-t hidden">
+            <div class="px-4 py-2 space-y-2">
+                <a href="index.html" class="block py-2 text-gray-700 hover:text-teal-600 transition">Trang Chủ</a>
+                <a href="tintuc.html" class="block py-2 text-gray-700 hover:text-teal-600 transition">Tin Tức</a>
+                <a href="kythuat-nuoi.html" class="block py-2 text-gray-700 hover:text-teal-600 transition">Kỹ Thuật Nuôi Trồng</a>
+                <a href="benh-thuy-san.html" class="block py-2 text-gray-700 hover:text-teal-600 transition">Bệnh Thủy Sản</a>
+                <a href="gia-thuy-san.html" class="block py-2 text-teal-600 font-semibold">Giá Thủy Sản</a>
+                <a href="dangtin.html" class="block py-2 text-gray-700 hover:text-teal-600 transition">Đăng Tin</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Giá Thủy Sản Trà Vinh</h1>
+            <p class="text-gray-600">Theo dõi giá cả thủy sản cập nhật hàng ngày</p>
+        </div>
+        <!-- Filter Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Loài thủy sản</label>
+                    <select id="species-filter" onchange="loadPriceData()" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        <option value="Tôm Thẻ">Tôm Thẻ</option>
+                        <option value="Cá Tra">Cá Tra</option>
+                        <option value="Cá Basa">Cá Basa</option>
+                        <option value="Tôm Sú">Tôm Sú</option>
+                        <option value="Cua Biển">Cua Biển</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian</label>
+                    <select id="period-filter" onchange="loadPriceData()" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        <option value="7">7 ngày qua</option>
+                        <option value="30" selected>30 ngày qua</option>
+                        <option value="90">3 tháng qua</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="loadPriceData()" 
+                            class="w-full px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Chart -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Biểu đồ giá</h2>
+            <div class="relative h-96" id="chart-container">
+                <canvas id="priceChart"></canvas>
+                <div id="chart-fallback" class="hidden flex items-center justify-center h-full text-gray-500">
+                    <div class="text-center">
+                        <p class="text-lg mb-2">Biểu đồ đang được tải...</p>
+                        <p class="text-sm">Nếu không hiển thị, vui lòng kiểm tra kết nối mạng</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Prices Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Giá hiện tại</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-medium text-gray-700">Loài</th>
+                            <th class="text-left py-3 px-4 font-medium text-gray-700">Giá (VNĐ/kg)</th>
+                            <th class="text-left py-3 px-4 font-medium text-gray-700">Khu vực</th>
+                            <th class="text-left py-3 px-4 font-medium text-gray-700">Cập nhật</th>
+                            <th class="text-left py-3 px-4 font-medium text-gray-700">Xu hướng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="price-table-body">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Price Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Giá cao nhất</h3>
+                <p id="highest-price" class="text-2xl font-bold text-gray-900">-</p>
+                <p class="text-sm text-gray-600 mt-1">Trong 30 ngày qua</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Giá thấp nhất</h3>
+                <p id="lowest-price" class="text-2xl font-bold text-gray-900">-</p>
+                <p class="text-sm text-gray-600 mt-1">Trong 30 ngày qua</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Giá trung bình</h3>
+                <p id="average-price" class="text-2xl font-bold text-gray-900">-</p>
+                <p class="text-sm text-gray-600 mt-1">Trong 30 ngày qua</p>
+            </div>
+        </div>
+
+        <!-- Market News -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Tin tức thị trường</h2>
+            <div class="space-y-4">
+                <div class="border-l-4 border-teal-500 pl-4">
+                    <h3 class="font-medium text-gray-800">Giá tôm thẻ tăng mạnh do nhu cầu xuất khẩu</h3>
+                    <p class="text-sm text-gray-600 mt-1">Giá tôm thẻ tại Trà Vinh đã tăng 15% trong tuần qua do đơn hàng xuất khẩu tăng cao...</p>
+                    <p class="text-xs text-gray-500 mt-2">2 ngày trước</p>
+                </div>
+                <div class="border-l-4 border-gray-300 pl-4">
+                    <h3 class="font-medium text-gray-800">Thời tiết thuận lợi cho nuôi cá tra</h3>
+                    <p class="text-sm text-gray-600 mt-1">Điều kiện thời tiết ổn định giúp năng suất nuôi cá tra tăng, dự kiến giá sẽ ổn định...</p>
+                    <p class="text-xs text-gray-500 mt-2">5 ngày trước</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="img/logo.png" alt="Logo" class="h-10 w-10">
+                        <span class="text-xl font-bold">Thủy Sản Trà Vinh</span>
+                    </div>
+                    <p class="text-gray-300 text-sm">Cổng thông tin hàng đầu về nuôi trồng thủy sản tại Trà Vinh</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Liên kết nhanh</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition">Trang chủ</a></li>
+                        <li><a href="tintuc.html" class="text-gray-300 hover:text-white transition">Tin tức</a></li>
+                        <li><a href="kythuat-nuoi.html" class="text-gray-300 hover:text-white transition">Kỹ thuật nuôi</a></li>
+                        <li><a href="gia-thuy-san.html" class="text-gray-300 hover:text-white transition">Giá thủy sản</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Hỗ trợ</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Liên hệ</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Báo lỗi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Liên hệ</h3>
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>Email: info@thuysantravinh.vn</p>
+                        <p>Điện thoại: (0294) 123-4567</p>
+                        <p>Địa chỉ: Trà Vinh, Việt Nam</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2025 Thủy Sản Trà Vinh. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div id="chatbot-container" class="fixed bottom-6 right-6 z-50">
+        <button id="chatbot-toggle" onclick="toggleChatbot()" 
+                class="bg-teal-600 hover:bg-teal-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 transform hover:scale-105">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+        </button>
+        
+        <div id="chatbot-window" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-lg shadow-xl border border-gray-200">
+            <div class="bg-teal-600 text-white p-4 rounded-t-lg">
+                <h3 class="font-semibold">Hỗ trợ giá thủy sản</h3>
+                <p class="text-sm opacity-90">Hỏi về giá cả và thị trường</p>
+            </div>
+            <div id="chatbot-messages" class="h-64 overflow-y-auto p-4 space-y-3">
+                <div class="bg-gray-100 rounded-lg p-3 text-sm">
+                    Xin chào! Tôi có thể giúp bạn tìm hiểu về giá thủy sản và xu hướng thị trường. Bạn muốn biết gì?
+                </div>
+            </div>
+            <div class="p-4 border-t">
+                <div class="flex space-x-2">
+                    <input type="text" id="chatbot-input" placeholder="Nhập câu hỏi..." 
+                           onkeypress="if(event.key==='Enter') sendChatMessage()"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                    <button onclick="sendChatMessage()" 
+                            class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let priceChart = null;
+
+        // Load price data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Price page loaded');
+            checkLoginStatus();
+            loadPriceData();
+        });
+
+        // Load price data from API
+        async function loadPriceData() {
+            console.log('Loading price data...');
+            const species = document.getElementById('species-filter').value;
+            const days = document.getElementById('period-filter').value;
+            
+            try {
+                const response = await fetch(`db.php/get_price_chart.php?species=${encodeURIComponent(species)}&days=${days}`);
+                const result = await response.json();
+                
+                console.log('Price data result:', result);
+                
+                if (result.success && result.data.length > 0) {
+                    updateChart(result.data);
+                    updatePriceTable(result.data);
+                    updateStatistics(result.data);
+                } else {
+                    console.log('No data found, showing message');
+                    showNoDataMessage();
+                }
+            } catch (error) {
+                console.error('Error loading price data:', error);
+                showErrorMessage();
+            }
+        }
+
+        // Update price chart
+        function updateChart(data) {
+            console.log('Updating chart with data:', data);
+            
+            // Check if Chart.js is available
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded');
+                showChartFallback();
+                return;
+            }
+            
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            if (priceChart) {
+                priceChart.destroy();
+            }
+            
+            const labels = data.map(item => {
+                const date = new Date(item.recorded_at);
+                return date.toLocaleDateString('vi-VN');
+            });
+            
+            const prices = data.map(item => parseFloat(item.price));
+            
+            try {
+                priceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Giá (VNĐ/kg)',
+                            data: prices,
+                            borderColor: '#0d9488',
+                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: {
+                                    callback: function(value) {
+                                        return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
+                                    }
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 4,
+                                hoverRadius: 6
+                            }
+                        }
+                    }
+                });
+                
+                // Hide fallback if chart loads successfully
+                document.getElementById('chart-fallback').classList.add('hidden');
+            } catch (error) {
+                console.error('Error creating chart:', error);
+                showChartFallback();
+            }
+        }
+        
+        // Show chart fallback
+        function showChartFallback() {
+            document.getElementById('chart-fallback').classList.remove('hidden');
+            document.getElementById('priceChart').style.display = 'none';
+        }
+        // Update price table
+        function updatePriceTable(data) {
+            console.log('Updating price table with data:', data);
+            const tbody = document.getElementById('price-table-body');
+            tbody.innerHTML = '';
+            
+            // Group by species and get latest price for each
+            const latestPrices = {};
+            data.forEach(item => {
+                if (!latestPrices[item.species] || new Date(item.recorded_at) > new Date(latestPrices[item.species].recorded_at)) {
+                    latestPrices[item.species] = item;
+                }
+            });
+            
+            Object.values(latestPrices).forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                
+                const trend = calculateTrend(data, item.species);
+                const trendIcon = trend > 0 ? '↗️' : trend < 0 ? '↘️' : '→';
+                const trendColor = trend > 0 ? 'text-green-600' : trend < 0 ? 'text-red-600' : 'text-gray-600';
+                
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-gray-800">${item.species}</td>
+                    <td class="py-3 px-4 text-gray-700">${new Intl.NumberFormat('vi-VN').format(item.price)} đ</td>
+                    <td class="py-3 px-4 text-gray-600">${item.location}</td>
+                    <td class="py-3 px-4 text-gray-600">${new Date(item.recorded_at).toLocaleDateString('vi-VN')}</td>
+                    <td class="py-3 px-4 ${trendColor}">${trendIcon}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStatistics(data) {
+            console.log('Updating statistics with data:', data);
+            const prices = data.map(item => parseFloat(item.price));
+            
+            const highest = Math.max(...prices);
+            const lowest = Math.min(...prices);
+            const average = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+            
+            document.getElementById('highest-price').textContent = new Intl.NumberFormat('vi-VN').format(highest) + ' đ';
+            document.getElementById('lowest-price').textContent = new Intl.NumberFormat('vi-VN').format(lowest) + ' đ';
+            document.getElementById('average-price').textContent = new Intl.NumberFormat('vi-VN').format(Math.round(average)) + ' đ';
+        }
+
+        // Calculate price trend
+        function calculateTrend(data, species) {
+            const speciesData = data.filter(item => item.species === species).sort((a, b) => new Date(a.recorded_at) - new Date(b.recorded_at));
+            
+            if (speciesData.length < 2) return 0;
+            
+            const latest = parseFloat(speciesData[speciesData.length - 1].price);
+            const previous = parseFloat(speciesData[speciesData.length - 2].price);
+            
+            return latest - previous;
+        }
+
+        // Show no data message
+        function showNoDataMessage() {
+            console.log('Showing no data message');
+            document.getElementById('price-table-body').innerHTML = `
+                <tr>
+                    <td colspan="5" class="py-8 text-center text-gray-500">
+                        Không có dữ liệu giá cho loài này trong khoảng thời gian đã chọn
+                    </td>
+                </tr>
+            `;
+            
+            // Hide chart if no data
+            const chartContainer = document.getElementById('priceChart').parentElement.parentElement;
+            chartContainer.style.display = 'none';
+        }
+
+        // Show error message
+        function showErrorMessage() {
+            console.log('Showing error message');
+            document.getElementById('price-table-body').innerHTML = `
+                <tr>
+                    <td colspan="5" class="py-8 text-center text-red-500">
+                        Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.
+                    </td>
+                </tr>
+            `;
+        }
+        // Chatbot functions
+        function toggleChatbot() {
+            const window = document.getElementById('chatbot-window');
+            window.classList.toggle('hidden');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Simulate bot response
+            setTimeout(() => {
+                const response = generatePriceResponse(message);
+                addChatMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function addChatMessage(message, sender) {
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            
+            if (sender === 'user') {
+                messageDiv.className = 'bg-teal-600 text-white rounded-lg p-3 text-sm ml-8';
+            } else {
+                messageDiv.className = 'bg-gray-100 rounded-lg p-3 text-sm mr-8';
+            }
+            
+            messageDiv.textContent = message;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generatePriceResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('tôm')) {
+                return 'Giá tôm thẻ hiện tại khoảng 180,000-190,000 VNĐ/kg. Giá có xu hướng tăng nhẹ do nhu cầu xuất khẩu cao.';
+            } else if (lowerMessage.includes('cá')) {
+                return 'Giá cá tra dao động 31,000-33,000 VNĐ/kg. Thị trường ổn định với nguồn cung đầy đủ.';
+            } else if (lowerMessage.includes('giá') || lowerMessage.includes('bao nhiêu')) {
+                return 'Bạn có thể xem bảng giá chi tiết ở trên trang này. Giá được cập nhật hàng ngày từ các chợ đầu mối tại Trà Vinh.';
+            } else {
+                return 'Tôi có thể giúp bạn tìm hiểu về giá tôm, cá và các loại thủy sản khác. Bạn muốn biết giá loài nào?';
+            }
+        }
+    </script>
+</body>
+</html>
