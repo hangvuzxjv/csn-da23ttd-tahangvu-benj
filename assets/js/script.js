@@ -2175,6 +2175,8 @@ async function sendChatMessage() {
     
     if (!message) return;
     
+    console.log('🤖 Sending message:', message);
+    
     // Hiển thị tin nhắn của user
     addChatMessage(message, 'user');
     input.value = '';
@@ -2184,26 +2186,30 @@ async function sendChatMessage() {
     
     try {
         const url = window.apiUrl ? apiUrl('db.php/chatbot.php') : '/Project/db.php/chatbot.php';
+        console.log('🌐 API URL:', url);
+        
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: message })
         });
         
+        console.log('📡 Response status:', response.status);
         const result = await response.json();
+        console.log('📦 Response data:', result);
         
         // Xóa typing indicator
         removeTypingIndicator();
         
         if (result.success) {
-            addChatMessage(result.response, 'bot');
+            addChatMessage(result.message, 'bot');
         } else {
-            addChatMessage('Xin lỗi, tôi không thể trả lời câu hỏi này lúc này.', 'bot');
+            addChatMessage('Xin lỗi, tôi không thể trả lời câu hỏi này lúc này. Lỗi: ' + (result.message || 'Không xác định'), 'bot');
         }
     } catch (error) {
-        console.error('Lỗi chatbot:', error);
+        console.error('❌ Lỗi chatbot:', error);
         removeTypingIndicator();
-        addChatMessage('Lỗi kết nối. Vui lòng thử lại sau.', 'bot');
+        addChatMessage('Lỗi kết nối. Vui lòng thử lại sau. Chi tiết: ' + error.message, 'bot');
     }
 }
 
@@ -2216,15 +2222,50 @@ function addChatMessage(message, sender, isTyping = false) {
     if (sender === 'user') {
         messageDiv.className = 'bg-teal-600 text-white p-3 rounded-lg ml-8 shadow-sm';
     } else {
-        messageDiv.className = 'bg-white p-3 rounded-lg mr-8 shadow-sm';
+        messageDiv.className = 'bg-white p-3 rounded-lg mr-8 shadow-sm border border-gray-200';
         if (isTyping) {
             messageDiv.id = 'typing-indicator';
         }
     }
     
-    messageDiv.innerHTML = `<p class="text-sm">${message}</p>`;
+    // Format markdown-like text
+    let formattedMessage = message;
+    if (sender === 'bot') {
+        formattedMessage = formatBotMessage(message);
+    }
+    
+    messageDiv.innerHTML = `<div class="text-sm">${formattedMessage}</div>`;
     container.appendChild(messageDiv);
     container.scrollTop = container.scrollHeight;
+}
+
+function formatBotMessage(message) {
+    // Convert markdown-like formatting to HTML
+    let formatted = message
+        // Bold text: **text** -> <strong>text</strong>
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-teal-700">$1</strong>')
+        // Emoji bullets: 🔹 -> proper spacing
+        .replace(/🔹/g, '<span class="inline-block mr-2">🔹</span>')
+        // Line breaks
+        .replace(/\n/g, '<br>')
+        // Sections with emojis
+        .replace(/📋 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">📋</span> <strong class="font-semibold text-gray-800">$1</strong></div>')
+        .replace(/🌊 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">🌊</span> <strong class="font-semibold text-blue-600">$1</strong></div>')
+        .replace(/🦐 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">🦐</span> <strong class="font-semibold text-orange-600">$1</strong></div>')
+        .replace(/🐟 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">🐟</span> <strong class="font-semibold text-blue-500">$1</strong></div>')
+        .replace(/🏥 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">🏥</span> <strong class="font-semibold text-red-600">$1</strong></div>')
+        .replace(/💰 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">💰</span> <strong class="font-semibold text-green-600">$1</strong></div>')
+        .replace(/🔬 \*\*(.*?)\*\*/g, '<div class="mt-3 mb-2"><span class="text-lg">🔬</span> <strong class="font-semibold text-purple-600">$1</strong></div>')
+        // List items with dashes
+        .replace(/- (.*?)(?=<br>|$)/g, '<div class="ml-4 mb-1">• $1</div>')
+        // Checkmarks
+        .replace(/✅ \*\*(.*?)\*\*/g, '<div class="mt-2 mb-1"><span class="text-green-500">✅</span> <strong class="font-medium">$1</strong></div>')
+        // Color codes for different statuses
+        .replace(/🔴 \*\*(.*?)\*\*/g, '<div class="mt-2 mb-1 p-2 bg-red-50 rounded border-l-4 border-red-400"><span class="text-red-500">🔴</span> <strong class="font-medium text-red-700">$1</strong></div>')
+        .replace(/🟡 \*\*(.*?)\*\*/g, '<div class="mt-2 mb-1 p-2 bg-yellow-50 rounded border-l-4 border-yellow-400"><span class="text-yellow-500">🟡</span> <strong class="font-medium text-yellow-700">$1</strong></div>')
+        .replace(/🟠 \*\*(.*?)\*\*/g, '<div class="mt-2 mb-1 p-2 bg-orange-50 rounded border-l-4 border-orange-400"><span class="text-orange-500">🟠</span> <strong class="font-medium text-orange-700">$1</strong></div>');
+    
+    return formatted;
 }
 
 function removeTypingIndicator() {

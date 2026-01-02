@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ Đồ Use Case - Thủy Sản Trà Vinh</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 25px;
+            font-size: 16px;
+        }
+        
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 3px solid #fff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e4d72 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3.2em;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.4em;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .diagram-section {
+            padding: 50px;
+            border-bottom: 4px solid #f5f5f5;
+            background: #fafafa;
+        }
+        
+        .diagram-section:nth-child(even) {
+            background: #ffffff;
+        }
+        
+        .diagram-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-title {
+            font-size: 2.4em;
+            color: #1e4d72;
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #e3f2fd;
+            position: relative;
+            font-weight: 600;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #2c5aa0, #1e4d72);
+            border-radius: 2px;
+        }
+        
+        .mermaid {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            border: 3px solid #2c5aa0;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(44, 90, 160, 0.1);
+            min-height: 400px;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .legend-card {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d1ecf1 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 6px solid #2c5aa0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            border: 2px solid #e3f2fd;
+        }
+        
+        .legend-card h3 {
+            color: #1e4d72;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        
+        .legend-card ul {
+            list-style: none;
+        }
+        
+        .legend-card li {
+            padding: 12px 0;
+            border-bottom: 2px solid rgba(44, 90, 160, 0.1);
+            font-size: 1.1em;
+            line-height: 1.4;
+        }
+        
+        .legend-card li:last-child {
+            border-bottom: none;
+        }
+        
+        .legend-card li strong {
+            color: #1e4d72;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            border: 3px solid #e3f2fd;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #2c5aa0;
+        }
+        
+        .stat-number {
+            font-size: 3.2em;
+            font-weight: 700;
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .stat-label {
+            color: #555;
+            font-size: 1.3em;
+            font-weight: 500;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e4d72 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        /* Print styles for better screenshots */
+        @media print {
+            body { 
+                background: white; 
+                padding: 0;
+            }
+            .main-container { 
+                box-shadow: none; 
+                border: none;
+                max-width: none;
+            }
+            .diagram-section { 
+                page-break-inside: avoid;
+                padding: 30px;
+            }
+            .mermaid {
+                border: 2px solid #2c5aa0;
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .header h1 { font-size: 2.2em; }
+            .header p { font-size: 1.2em; }
+            .section-title { font-size: 1.8em; }
+            .diagram-section { padding: 25px; }
+            .mermaid { padding: 25px; }
+            .legend-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat-number { font-size: 2.5em; }
+        }
+        
+        /* Mermaid diagram enhancements */
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Screenshot optimization */
+        .screenshot-section {
+            background: white;
+            border: 3px solid #2c5aa0;
+            border-radius: 15px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🐟 SƠ ĐỒ USE CASE</h1>
+            <p>Hệ Thống Website Thủy Sản Trà Vinh</p>
+        </div>
+
+        <!-- Statistics Overview -->
+        <div class="diagram-section">
+            <h2 class="section-title">📊 Tổng Quan Hệ Thống</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Actors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">Use Cases</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Database Tables</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Nhóm Chức Năng</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Use Case Diagram -->
+        <div class="diagram-section">
+            <h2 class="section-title">🎯 Sơ Đồ Use Case Chính</h2>
+            <div class="mermaid">
+graph TB
+    %% Actors với styling đẹp hơn
+    Guest["👤<br/><b>GUEST</b><br/><i>Khách</i>"]
+    User["👨‍💼<br/><b>USER</b><br/><i>Người dùng</i>"]
+    Admin["👨‍💻<br/><b>ADMIN</b><br/><i>Quản trị viên</i>"]
+    
+    %% Authentication Group
+    subgraph AUTH["🔐 XÁC THỰC (AUTHENTICATION)"]
+        UC01["📝 Đăng ký<br/><small>Register</small>"]
+        UC02["🔑 Đăng nhập<br/><small>Login</small>"]
+        UC03["🔄 Quên mật khẩu<br/><small>Forgot Password</small>"]
+        UC04["🆕 Đặt lại mật khẩu<br/><small>Reset Password</small>"]
+    end
+    
+    %% Content Management Group
+    subgraph CONTENT["📝 QUẢN LÝ NỘI DUNG (CONTENT)"]
+        UC05["📖 Xem bài viết<br/><small>View Posts</small>"]
+        UC06["📄 Chi tiết bài viết<br/><small>Post Details</small>"]
+        UC07["✍️ Đăng bài viết<br/><small>Create Post</small>"]
+        UC08["✅ Duyệt bài viết<br/><small>Approve Post</small>"]
+        UC09["🗑️ Xóa bài viết<br/><small>Delete Post</small>"]
+    end
+    
+    %% Rating Group
+    subgraph RATING["⭐ ĐÁNH GIÁ (RATING)"]
+        UC10["⭐ Đánh giá bài<br/><small>Rate Post</small>"]
+        UC11["📊 Xem đánh giá<br/><small>View Ratings</small>"]
+    end
+    
+    %% Profile Group
+    subgraph PROFILE["👤 HỒ SƠ (PROFILE)"]
+        UC12["👁️ Xem profile<br/><small>View Profile</small>"]
+        UC13["✏️ Sửa profile<br/><small>Edit Profile</small>"]
+        UC14["🔒 Đổi mật khẩu<br/><small>Change Password</small>"]
+    end
+    
+    %% Search Group
+    subgraph SEARCH["🔍 TÌM KIẾM (SEARCH)"]
+        UC15["🔍 Tìm kiếm<br/><small>Search Posts</small>"]
+        UC16["🏷️ Lọc danh mục<br/><small>Filter Category</small>"]
+    end
+    
+    %% Admin Group
+    subgraph ADMIN_FUNC["📈 QUẢN TRỊ (ADMIN)"]
+        UC17["📊 Thống kê<br/><small>Statistics</small>"]
+        UC18["👥 Quản lý user<br/><small>User Management</small>"]
+    end
+    
+    %% Guest connections với labels
+    Guest -.->|"Có thể thực hiện"| AUTH
+    Guest -.->|"Xem được"| CONTENT
+    Guest -.->|"Xem được"| RATING
+    Guest -.->|"Sử dụng được"| SEARCH
+    
+    %% User connections với labels
+    User -.->|"Quản lý"| PROFILE
+    User -.->|"Tạo mới"| UC07
+    User -.->|"Đánh giá"| UC10
+    User -.->|"Xóa của mình"| UC09
+    
+    %% Admin connections với labels
+    Admin -.->|"Kiểm duyệt"| UC08
+    Admin -.->|"Toàn quyền"| ADMIN_FUNC
+    
+    %% Styling với màu sắc rõ ràng hơn
+    classDef actor fill:#e3f2fd,stroke:#1976d2,stroke-width:4px,color:#000,font-weight:bold
+    classDef authGroup fill:#e8f5e8,stroke:#388e3c,stroke-width:3px,color:#2e7d32
+    classDef contentGroup fill:#fff3e0,stroke:#f57c00,stroke-width:3px,color:#ef6c00
+    classDef ratingGroup fill:#fce4ec,stroke:#c2185b,stroke-width:3px,color:#ad1457
+    classDef profileGroup fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#6a1b9a
+    classDef searchGroup fill:#e0f2f1,stroke:#00796b,stroke-width:3px,color:#00695c
+    classDef adminGroup fill:#ffebee,stroke:#d32f2f,stroke-width:3px,color:#c62828
+    
+    class Guest,User,Admin actor
+    class AUTH authGroup
+    class CONTENT contentGroup
+    class RATING ratingGroup
+    class PROFILE profileGroup
+    class SEARCH searchGroup
+    class ADMIN_FUNC adminGroup
+            </div>
+        </div>
+
+        <!-- Database ERD -->
+        <div class="diagram-section">
+            <h2 class="section-title">🗄️ Sơ Đồ Cơ Sở Dữ Liệu</h2>
+            <div class="mermaid">
+erDiagram
+    USERS {
+        int id PK "🔑 Khóa chính"
+        string username UK "👤 Tên đăng nhập (duy nhất)"
+        string email UK "📧 Email (duy nhất)"
+        string password_hash "🔒 Mật khẩu mã hóa"
+        string fullname "📝 Họ tên đầy đủ"
+        string phone "📞 Số điện thoại"
+        string location "📍 Địa chỉ"
+        enum role "👨‍💼 Vai trò (user/admin)"
+        string avatar "🖼️ Ảnh đại diện"
+        timestamp created_at "📅 Ngày tạo tài khoản"
+        timestamp updated_at "🔄 Ngày cập nhật cuối"
+    }
+    
+    POSTS {
+        int id PK "🔑 Khóa chính"
+        string title "📰 Tiêu đề bài viết"
+        text content "📝 Nội dung chi tiết"
+        string author_username FK "👤 Tác giả (FK → users.username)"
+        enum category "🏷️ Danh mục (tin-tuc/ky-thuat/tom-nuoi/ca-nuoi/benh-thuy-san)"
+        enum status "📊 Trạng thái (pending/approved/rejected)"
+        string image_url "🖼️ Đường dẫn ảnh bài viết"
+        int views "👁️ Số lượt xem"
+        int rating_total "⭐ Tổng điểm đánh giá"
+        int rating_count "🔢 Số lượt đánh giá"
+        text admin_note "📋 Ghi chú từ admin"
+        timestamp created_at "📅 Ngày tạo bài"
+        timestamp updated_at "🔄 Ngày cập nhật cuối"
+    }
+    
+    RATINGS {
+        int id PK "🔑 Khóa chính"
+        int post_id FK "📰 ID bài viết (FK → posts.id)"
+        int user_id FK "👤 ID người dùng (FK → users.id)"
+        int rating "⭐ Điểm đánh giá (1-5 sao)"
+        timestamp created_at "📅 Thời gian đánh giá"
+    }
+    
+    PASSWORD_RESETS {
+        int id PK "🔑 Khóa chính"
+        string email "📧 Email yêu cầu reset"
+        string token "🎫 Token xác thực (unique)"
+        datetime expires_at "⏰ Thời gian hết hạn token"
+        boolean used "✅ Trạng thái đã sử dụng"
+        timestamp created_at "📅 Ngày tạo yêu cầu"
+    }
+    
+    %% Relationships với labels rõ ràng
+    USERS ||--o{ POSTS : "tạo bài viết"
+    USERS ||--o{ RATINGS : "đánh giá bài viết"
+    POSTS ||--o{ RATINGS : "nhận đánh giá"
+    USERS ||--o{ PASSWORD_RESETS : "yêu cầu reset mật khẩu"
+            </div>
+        </div>
+
+        <!-- Actor Permissions -->
+        <div class="diagram-section">
+            <h2 class="section-title">🔐 Phân Quyền Hệ Thống</h2>
+            <div class="mermaid">
+graph LR
+    subgraph GUEST_PERMS["👤 GUEST - Không cần đăng nhập"]
+        G1["📖 Xem tin tức<br/><small>Đọc tất cả bài viết</small>"]
+        G2["🔍 Tìm kiếm bài viết<br/><small>Tìm theo từ khóa, danh mục</small>"]
+        G3["💰 Xem giá thủy sản<br/><small>Theo dõi giá cả thị trường</small>"]
+        G4["📊 Xem đánh giá<br/><small>Xem rating của bài viết</small>"]
+        G5["🔐 Đăng ký/Đăng nhập<br/><small>Tạo tài khoản mới</small>"]
+    end
+    
+    subgraph USER_PERMS["👨‍💼 USER - Cần đăng nhập"]
+        U1["✍️ Đăng bài viết<br/><small>Tạo nội dung mới</small>"]
+        U2["⭐ Đánh giá bài viết<br/><small>Vote 1-5 sao</small>"]
+        U3["👤 Quản lý profile<br/><small>Cập nhật thông tin cá nhân</small>"]
+        U4["🔒 Đổi mật khẩu<br/><small>Bảo mật tài khoản</small>"]
+        U5["🗑️ Xóa bài của mình<br/><small>Quản lý nội dung cá nhân</small>"]
+    end
+    
+    subgraph ADMIN_PERMS["👨‍💻 ADMIN - Quyền cao nhất"]
+        A1["✅ Duyệt bài viết<br/><small>Approve/Reject posts</small>"]
+        A2["🗑️ Xóa mọi bài viết<br/><small>Kiểm soát nội dung</small>"]
+        A3["👥 Quản lý người dùng<br/><small>User management</small>"]
+        A4["📈 Xem thống kê<br/><small>Analytics & Reports</small>"]
+        A5["🛠️ Quản trị hệ thống<br/><small>System administration</small>"]
+    end
+    
+    %% Inheritance arrows với labels
+    USER_PERMS -.->|"Kế thừa tất cả quyền của Guest"| GUEST_PERMS
+    ADMIN_PERMS -.->|"Kế thừa tất cả quyền của User + Guest"| USER_PERMS
+    
+    %% Styling với màu sắc rõ ràng
+    classDef guestBox fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
+    classDef userBox fill:#e8f5e8,stroke:#388e3c,stroke-width:3px,color:#1b5e20
+    classDef adminBox fill:#ffebee,stroke:#d32f2f,stroke-width:3px,color:#b71c1c
+    
+    class GUEST_PERMS guestBox
+    class USER_PERMS userBox
+    class ADMIN_PERMS adminBox
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="diagram-section">
+            <h2 class="section-title">📋 Chú Thích & Thống Kê</h2>
+            <div class="legend-grid">
+                <div class="legend-card">
+                    <h3>🎭 Actors (Tác nhân)</h3>
+                    <ul>
+                        <li><strong>👤 Guest:</strong> Khách chưa đăng nhập</li>
+                        <li><strong>👨‍💼 User:</strong> Người dùng đã đăng nhập</li>
+                        <li><strong>👨‍💻 Admin:</strong> Quản trị viên hệ thống</li>
+                    </ul>
+                </div>
+                
+                <div class="legend-card">
+                    <h3>📊 Database Operations</h3>
+                    <ul>
+                        <li><strong>SELECT:</strong> 8 use cases</li>
+                        <li><strong>INSERT:</strong> 4 use cases</li>
+                        <li><strong>UPDATE:</strong> 6 use cases</li>
+                        <li><strong>DELETE:</strong> 1 use case</li>
+                    </ul>
+                </div>
+                
+                <div class="legend-card">
+                    <h3>🏷️ Nhóm Chức Năng</h3>
+                    <ul>
+                        <li><strong>🔐 Authentication:</strong> 4 UC</li>
+                        <li><strong>📝 Quản lý nội dung:</strong> 5 UC</li>
+                        <li><strong>⭐ Đánh giá:</strong> 2 UC</li>
+                        <li><strong>👤 Profile:</strong> 3 UC</li>
+                        <li><strong>🔍 Tìm kiếm:</strong> 2 UC</li>
+                        <li><strong>📈 Quản trị:</strong> 2 UC</li>
+                    </ul>
+                </div>
+                
+                <div class="legend-card">
+                    <h3>🔗 Quan Hệ Database</h3>
+                    <ul>
+                        <li><strong>users → posts:</strong> 1:N (tác giả)</li>
+                        <li><strong>users → ratings:</strong> 1:N (đánh giá)</li>
+                        <li><strong>posts → ratings:</strong> 1:N (được đánh giá)</li>
+                        <li><strong>users → password_resets:</strong> 1:N</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>📅 Cập nhật: 03/01/2025 | 🏫 Website Thủy Sản Trà Vinh | 👨‍💻 Sơ đồ Use Case & Database Design | 🎯 18 Use Cases - 4 Tables - 3 Actors</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#1e4d72',
+                primaryBorderColor: '#2c5aa0',
+                lineColor: '#2c5aa0',
+                secondaryColor: '#f8f9fa',
+                tertiaryColor: '#fff'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20
+            },
+            er: {
+                useMaxWidth: true,
+                fontSize: 16
+            },
+            sequence: {
+                useMaxWidth: true
+            },
+            gantt: {
+                useMaxWidth: true
+            }
+        });
+        
+        // Enhance diagram visibility after load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                // Add custom styling to mermaid elements
+                const mermaidDivs = document.querySelectorAll('.mermaid');
+                mermaidDivs.forEach(div => {
+                    const svg = div.querySelector('svg');
+                    if (svg) {
+                        svg.style.filter = 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))';
+                    }
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

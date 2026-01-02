@@ -254,14 +254,14 @@
                 <h3 class="font-semibold">Hỗ trợ giá thủy sản</h3>
                 <p class="text-sm opacity-90">Hỏi về giá cả và thị trường</p>
             </div>
-            <div id="chatbot-messages" class="h-64 overflow-y-auto p-4 space-y-3">
+            <div id="chat-messages" class="h-64 overflow-y-auto p-4 space-y-3">
                 <div class="bg-gray-100 rounded-lg p-3 text-sm">
                     Xin chào! Tôi có thể giúp bạn tìm hiểu về giá thủy sản và xu hướng thị trường. Bạn muốn biết gì?
                 </div>
             </div>
             <div class="p-4 border-t">
                 <div class="flex space-x-2">
-                    <input type="text" id="chatbot-input" placeholder="Nhập câu hỏi..." 
+                    <input type="text" id="chat-input" placeholder="Nhập câu hỏi..." 
                            onkeypress="if(event.key==='Enter') sendChatMessage()"
                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm">
                     <button onclick="sendChatMessage()" 
@@ -484,50 +484,7 @@
             window.classList.toggle('hidden');
         }
 
-        function sendChatMessage() {
-            const input = document.getElementById('chatbot-input');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            // Add user message
-            addChatMessage(message, 'user');
-            input.value = '';
-            
-            // Simulate bot response
-            setTimeout(() => {
-                const response = generatePriceResponse(message);
-                addChatMessage(response, 'bot');
-            }, 1000);
-        }
-
-        function addChatMessage(message, sender) {
-            const messagesContainer = document.getElementById('chatbot-messages');
-            const messageDiv = document.createElement('div');
-            
-            if (sender === 'user') {
-                messageDiv.className = 'bg-teal-600 text-white rounded-lg p-3 text-sm ml-8';
-            } else {
-                messageDiv.className = 'bg-gray-100 rounded-lg p-3 text-sm mr-8';
-            }
-            
-            messageDiv.textContent = message;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function generatePriceResponse(message) {
-            const lowerMessage = message.toLowerCase();
-            
-            if (lowerMessage.includes('tôm')) {
-                return 'Giá tôm thẻ hiện tại khoảng 180,000-190,000 VNĐ/kg. Giá có xu hướng tăng nhẹ do nhu cầu xuất khẩu cao.';
-            } else if (lowerMessage.includes('cá')) {
-                return 'Giá cá tra dao động 31,000-33,000 VNĐ/kg. Thị trường ổn định với nguồn cung đầy đủ.';
-            } else if (lowerMessage.includes('giá') || lowerMessage.includes('bao nhiêu')) {
-                return 'Bạn có thể xem bảng giá chi tiết ở trên trang này. Giá được cập nhật hàng ngày từ các chợ đầu mối tại Trà Vinh.';
-            } else {
-                return 'Tôi có thể giúp bạn tìm hiểu về giá tôm, cá và các loại thủy sản khác. Bạn muốn biết giá loài nào?';
-            }
+        // Chatbot functions đã được định nghĩa trong assets/js/script.js
         }
     </script>
 </body>
